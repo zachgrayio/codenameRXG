@@ -30,6 +30,7 @@ class GameLoop(var logger: Logger?,
                 .bindFrameInput(gameplayEngine.frameOutput())       // use the configured gameplay engine as framebus input
                 .use(middlewares)                                   // apply configured middleware
                 .frameOutput()                                      // get the Observable<Frame> output
+                .doOnNext { ioEngine.pollInput() }
                 .sample(1000 / frameRate, TimeUnit.MILLISECONDS)    // sample output @ the configured framerate
                 .map { frame -> ioEngine.render(frame) }            // map frames to renderer
 

@@ -12,6 +12,7 @@ interface IOEngine : AutoCloseable {
 
     fun render(frame: Frame)
     fun keyOutput(): Observable<KeyEvent>
+    fun pollInput()
 
 //    var lastRenderMs:Long
 //    fun delta():Int {

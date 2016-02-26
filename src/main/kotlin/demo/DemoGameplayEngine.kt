@@ -52,10 +52,10 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     init {
         // define key bindings
         ESC on RELEASED does togglePaused
-        W on PRESSED or HELD does moveSquadUp
-        A on PRESSED or HELD does moveSquadLeft
-        S on PRESSED or HELD does moveSquadDown
-        D on PRESSED or HELD does moveSquadRight
+        W on PRESSED does moveSquadUp
+        A on PRESSED does moveSquadLeft
+        S on PRESSED does moveSquadDown
+        D on PRESSED does moveSquadRight
         // initialize game
         squad spawn Position(200f, 200f)
     }
