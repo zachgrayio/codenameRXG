@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit
 open class Actor(
     var x:Float = 0f,
     var y:Float = 0f,
+    var rotation:Float = 0f,
     val size:Size = Actor.Size(),
     val speed:Float = 0f,
     val frameIntervalMs:Long = 100,

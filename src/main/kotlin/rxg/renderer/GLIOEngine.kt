@@ -34,7 +34,8 @@ class GLIOEngine(override val width: Int, override val height: Int) : IOEngine {
      */
     private val keyCallback:GLFWKeyCallback? = object : GLFWKeyCallback() {
         override operator fun invoke(window: kotlin.Long, key: kotlin.Int, scancode: kotlin.Int, action: kotlin.Int, mods: kotlin.Int) {
-            keySubject.onNext(KeyEvent(Keys.from(key), KeyActions.from(action)))
+            val k = Keys.from(key) ?: return
+            keySubject.onNext(KeyEvent(k, KeyActions.from(action)))
         }
     }
 
@@ -74,7 +75,7 @@ class GLIOEngine(override val width: Int, override val height: Int) : IOEngine {
         if(!ready) return
         if (glfwWindowShouldClose(window!!) != GLFW_FALSE) return
 
-        // these calls need to happen again in each call to render to ensure context is initialzed for the thread
+        // these calls need to happen again in each call to render to ensure context is initialized for the thread
         // on which render is invoked.
         GL.setCapabilities(glCapabilities!!)
         glfwMakeContextCurrent(window!!)
@@ -87,6 +88,7 @@ class GLIOEngine(override val width: Int, override val height: Int) : IOEngine {
             // position
             val x = it.x
             val y = it.y
+            val rotation = it.rotation
             // sprite
             val sprite = resourceManager.getByteBufferSprite(it.currentSprite())
             if (sprite.comp == 3) {
@@ -99,19 +101,25 @@ class GLIOEngine(override val width: Int, override val height: Int) : IOEngine {
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
             }
             // render sprite
+            val halfWidth = sprite.width.toFloat() / 2
+            val halfHeight = sprite.height.toFloat() / 2
+            val spriteLeft = 0.0f - halfWidth
+            val spriteRight = 0.0f - halfHeight
             glPushMatrix()
+            glTranslatef(x, y, 0f)
+            glRotatef(rotation, 0.0f, 0.0f, 1.0f)
             glBegin(GL_QUADS)
                 glTexCoord2f(0.0f, 0.0f)
-                glVertex2f(x, y)
+                glVertex2f(spriteLeft, spriteRight)
 
                 glTexCoord2f(1.0f, 0.0f)
-                glVertex2f(x + sprite.width.toFloat(), y)
+                glVertex2f(halfWidth, spriteRight)
 
                 glTexCoord2f(1.0f, 1.0f)
-                glVertex2f(x + sprite.width.toFloat(), y + sprite.height.toFloat())
+                glVertex2f(halfWidth, halfHeight)
 
                 glTexCoord2f(0.0f, 1.0f)
-                glVertex2f(x, y + sprite.height.toFloat())
+                glVertex2f(spriteLeft, halfHeight)
             glEnd()
             glPopMatrix()
         }
@@ -139,11 +147,15 @@ class GLIOEngine(override val width: Int, override val height: Int) : IOEngine {
 
         glClearColor(0.0f, 1.0f, 0.0f, 0.0f)
         glViewport(0, 0, width, height)
+
         glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         glOrtho(0.0, width.toDouble(), height.toDouble(), 0.toDouble(), 1.toDouble(), -1.toDouble())
-        glMatrixMode(GL_MODELVIEW)
+
+
 
         val texID = glGenTextures()
         glBindTexture(GL_TEXTURE_2D, texID)

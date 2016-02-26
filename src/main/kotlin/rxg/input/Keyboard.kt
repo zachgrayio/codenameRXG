@@ -54,6 +54,6 @@ enum class Keys(val glfwValue:Int) {
     Z(0x5A);
 
     companion object {
-        fun from(value: Int): Keys = Keys.values().first { it.glfwValue == value }
+        fun from(value: Int): Keys? = Keys.values().firstOrNull { it.glfwValue == value }
     }
 }

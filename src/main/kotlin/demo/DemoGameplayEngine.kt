@@ -40,6 +40,8 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     val moveSquadDown   = { if(!paused) squad moveDown  step }
     val moveSquadLeft   = { if(!paused) squad moveLeft  step }
     val moveSquadRight  = { if(!paused) squad moveRight step }
+    val rotateSquadPos  = { if(!paused) squad rotatePositive 0.1f }
+    val rotateSquadNeg  = { if(!paused) squad rotateNegative 0.1f }
 
     // Update
     //==================================================================================================================
@@ -56,6 +58,8 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
         A on PRESSED does moveSquadLeft
         S on PRESSED does moveSquadDown
         D on PRESSED does moveSquadRight
+        Q on PRESSED does rotateSquadNeg
+        E on PRESSED does rotateSquadPos
         // initialize game
         squad spawn Position(200f, 200f)
     }

@@ -61,6 +61,18 @@ interface GameplayEngine {
             .times(framePointer.delta)
     }
 
+    infix fun Actor.rotatePositive(value:Float) {
+        this.rotation += value
+            .times(framePointer.delta)
+        if(this.rotation > 360.0f) this.rotation = 0.0f
+    }
+
+    infix fun Actor.rotateNegative(value:Float) {
+        this.rotation -= value
+            .times(framePointer.delta)
+        if(this.rotation < 0.0f) this.rotation = 360.0f
+    }
+
     /**
      * Actor spawn / despawn
      */
