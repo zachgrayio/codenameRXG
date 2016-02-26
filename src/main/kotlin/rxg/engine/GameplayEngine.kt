@@ -38,47 +38,45 @@ interface GameplayEngine {
      * Actor infix operators
      */
     infix fun Actor.moveLeft(value:Float) {
-        this.x -= value
+        x -= value
             .times(speed)
             .times(framePointer.delta)
     }
 
     infix fun Actor.moveRight(value:Float) {
-        this.x += value
+        x += value
             .times(speed)
             .times(framePointer.delta)
     }
 
     infix fun Actor.moveUp(value:Float) {
-        this.y -= value
+        y -= value
             .times(speed)
             .times(framePointer.delta)
     }
 
     infix fun Actor.moveDown(value:Float) {
-        this.y += value
+        y += value
             .times(speed)
             .times(framePointer.delta)
     }
 
     infix fun Actor.rotatePositive(value:Float) {
-        this.rotation += value
-            .times(framePointer.delta)
-        if(this.rotation > 360.0f) this.rotation = 0.0f
+        rotation += value.times(framePointer.delta)
+        if(rotation > 360.0f) rotation = 0.0f
     }
 
     infix fun Actor.rotateNegative(value:Float) {
-        this.rotation -= value
-            .times(framePointer.delta)
-        if(this.rotation < 0.0f) this.rotation = 360.0f
+        rotation -= value.times(framePointer.delta)
+        if(rotation < 0.0f) rotation = 360.0f
     }
 
     /**
      * Actor spawn / despawn
      */
     infix fun Actor.spawn(position: Position) {
-        this.x = position.x
-        this.y = position.y
+        x = position.x
+        y = position.y
         framePointer.actors.add(this)
     }
     fun Actor.spawn() {
@@ -94,7 +92,7 @@ interface GameplayEngine {
     }
 
     infix fun KeyEvent.or(action:KeyActions):MutableList<KeyEvent> {
-        return mutableListOf(this, KeyEvent(this.key, action))
+        return mutableListOf(this, KeyEvent(key, action))
     }
 
     infix fun MutableList<KeyEvent>.or(action:KeyActions):MutableList<KeyEvent> {
@@ -104,13 +102,13 @@ interface GameplayEngine {
 
     infix fun KeyEvent.does(closure:()->Unit) {
         keySubject
-            .filter { it.key == this.key && it.keyAction == this.keyAction}
+            .filter { it.key == key && it.keyAction == keyAction}
             .subscribe { closure() }
     }
 
     infix fun MutableList<KeyEvent>.does(closure:()->Unit) {
         keySubject
-            .filter { event -> this.any { it.key == event.key && it.keyAction == event.keyAction} }
+            .filter { event -> any { it.key == event.key && it.keyAction == event.keyAction} }
             .subscribe { closure() }
     }
 }
