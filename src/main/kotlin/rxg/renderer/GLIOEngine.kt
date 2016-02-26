@@ -61,6 +61,7 @@ class GLIOEngine(override val width: Int, override val height: Int) : IOEngine {
 
     override fun pollInput() {
         if(window == null) return
+        // emit any currently pressed keys as key events on every poll
         Keys.values()
             .map    { KeyEvent(it, KeyActions.from(glfwGetKey(window!!, it.glfwValue))) }
             .filter { it.keyAction == KeyActions.PRESSED }
