@@ -3,9 +3,10 @@ package rxg.engine
 import rx.Observable
 import rx.lang.kotlin.BehaviourSubject
 import rx.subjects.BehaviorSubject
-import rxg.frame.Actor
-import rxg.frame.ActorBuilder
+import rxg.frame.actor.Actor
+import rxg.frame.actor.ActorBuilder
 import rxg.frame.Frame
+import rxg.frame.Position
 import rxg.input.KeyActions
 import rxg.input.KeyEvent
 import rxg.input.Keys
@@ -61,9 +62,22 @@ interface GameplayEngine {
     }
 
     /**
+     * Actor spawn / despawn
+     */
+    infix fun Actor.spawn(position: Position) {
+        this.x = position.x
+        this.y = position.y
+        framePointer.actors.add(this)
+    }
+    fun Actor.spawn() {
+        framePointer.actors.add(this)
+    }
+    fun Actor.despawn() { framePointer.actors.remove(this) }
+
+    /**
      * Key subject infix operators
      */
-    infix fun Keys.When(action:KeyActions):KeyEvent {
+    infix fun Keys.on(action:KeyActions):KeyEvent {
         return KeyEvent(this, action)
     }
 
@@ -86,13 +100,5 @@ interface GameplayEngine {
         keySubject
             .filter { event -> this.any { it.key == event.key && it.keyAction == event.keyAction} }
             .subscribe { closure() }
-    }
-
-    fun actor(init: ActorBuilder.()->Unit):Actor {
-        val builder = ActorBuilder()
-        builder.init()
-        val actor = builder.build()
-        framePointer.actors.add(actor)
-        return actor
     }
 }

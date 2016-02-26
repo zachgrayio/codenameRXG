@@ -1,18 +1,18 @@
-package rxg.frame
+package rxg.frame.actor
 
 import rx.Observable
 import rx.subjects.BehaviorSubject
-import rxg.engine.GameplayEngine
-import rxg.resource.ResourceManager
-import java.awt.image.BufferedImage
 import java.util.concurrent.TimeUnit
 
-class Actor(
+open class Actor(
     var x:Float = 0f,
     var y:Float = 0f,
-    var speed:Float = 0f,
-    var frameIntervalMs:Long = 100,
-    var sprites: List<String> = listOf()) {
+    val size:Size = Actor.Size(),
+    val speed:Float = 0f,
+    val frameIntervalMs:Long = 100,
+    val sprites: List<String> = listOf()) {
+
+    data class Size(var x:Float = 0f, var y:Float = 0f)
 
     private val frameSpriteSubject = BehaviorSubject.create<String>()
     private val singleSprite:String? = if(sprites.count() == 1) sprites[0] else null

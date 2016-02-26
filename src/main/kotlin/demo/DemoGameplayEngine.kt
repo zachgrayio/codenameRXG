@@ -1,43 +1,62 @@
 package demo
 
-import rx.lang.kotlin.BehaviourSubject
-import rx.subjects.BehaviorSubject
-import rxg.frame.Frame
-import rxg.engine.IntervalGameplayEngine
-import rxg.frame.Actor
+import rxg.frame.Position
+import rxg.frame.actor.Actor
+import rxg.frame.actor.ActorAttribute
+import rxg.frame.actor.actor
 import rxg.input.KeyActions.*
-import rxg.input.KeyEvent
 import rxg.input.Keys.*
-import java.util.concurrent.TimeUnit
+import rxg.preset.SimpleGameplayEngine
 
 /**
- * An interval-based gameplay engine which generates 1 frame every millisecond
- * (for an internal resolution of 1000 frames per second)
+ * A simple gameplay system based on an interval-based engine which generates 1,000 gameplay frames each second.
  */
-class DemoGameplayEngine() : IntervalGameplayEngine {
-    override val timeUnit: TimeUnit get() = TimeUnit.MILLISECONDS
-    override val interval: Long get() = 1
-    override val keySubject: BehaviorSubject<KeyEvent> = BehaviourSubject()
-    override val framePointer = Frame()
-    init {
-        val squad = actor {
-            x = 50f
-            y = 50f
-            speed = 1f
-            frameIntervalMs = 100
-            sprites = listOf("squad.png")
-        }
-        // define some gameplay settings and states
-        val step = 1f
-        var paused = false
-        // define some controls
-        ESC When RELEASED does { paused = !paused }
-        W When PRESSED or HELD does { if(!paused) squad moveUp      step }
-        A When PRESSED or HELD does { if(!paused) squad moveLeft    step }
-        S When PRESSED or HELD does { if(!paused) squad moveDown    step }
-        D When PRESSED or HELD does { if(!paused) squad moveRight   step }
-    }
-    override fun update() {
+class DemoGameplayEngine() : SimpleGameplayEngine() {
 
+    // Actors
+    //==================================================================================================================
+    val squad = actor {
+        size = Actor.Size(50f,50f)
+        speed = 1f
+        frameIntervalMs = 100
+        sprites = listOf("squad.png")
+    }
+    // all actors in this game should have health, so lets add an attribute to Actor:
+    var Actor.health: Int by ActorAttribute(initialValue = 100)
+
+    // Gameplay settings
+    //==================================================================================================================
+    val step = 1f
+
+    // Gameplay states
+    //==================================================================================================================
+    var paused = false
+
+    // Gameplay functions - simple closures can be used to easily extend the gameplay DSL
+    //==================================================================================================================
+    val togglePaused    = { paused = !paused }
+    val gameOver        = { squad.despawn() }
+    val moveSquadUp     = { if(!paused) squad moveUp    step }
+    val moveSquadDown   = { if(!paused) squad moveDown  step }
+    val moveSquadLeft   = { if(!paused) squad moveLeft  step }
+    val moveSquadRight  = { if(!paused) squad moveRight step }
+
+    // Update
+    //==================================================================================================================
+    override fun update() {
+        when(squad.health) { 0 -> gameOver() }
+    }
+
+    // Initialization
+    //==================================================================================================================
+    init {
+        // define key bindings
+        ESC on RELEASED does togglePaused
+        W on PRESSED or HELD does moveSquadUp
+        A on PRESSED or HELD does moveSquadLeft
+        S on PRESSED or HELD does moveSquadDown
+        D on PRESSED or HELD does moveSquadRight
+        // initialize game
+        squad spawn Position(200f, 200f)
     }
 }
