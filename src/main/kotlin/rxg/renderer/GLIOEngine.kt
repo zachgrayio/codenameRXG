@@ -20,6 +20,7 @@ import rxg.resource.ResourceManagerDelegate
  * An LWJGL 2D renderer implementation
  */
 class GLIOEngine(override val width: Int, override val height: Int) : IOEngine {
+
     override val resourceManager: ResourceManager by ResourceManagerDelegate()
 
     private val keySubject:BehaviorSubject<KeyEvent> = BehaviourSubject()
@@ -57,6 +58,15 @@ class GLIOEngine(override val width: Int, override val height: Int) : IOEngine {
         errorCallback.release()
         glfwTerminate()
     }
+
+    override fun pollInput() {
+        if(window == null) return
+        Keys.values()
+            .map    { KeyEvent(it, KeyActions.from(glfwGetKey(window!!, it.glfwValue))) }
+            .filter { it.keyAction == KeyActions.PRESSED }
+            .map    { keySubject.onNext(it) }
+    }
+
     override fun keyOutput(): Observable<KeyEvent> {
         return keySubject.asObservable()
     }

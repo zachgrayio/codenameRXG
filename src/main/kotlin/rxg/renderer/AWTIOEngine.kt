@@ -11,7 +11,8 @@ import java.awt.Dimension
 import javax.swing.JFrame
 import javax.swing.JPanel
 
-class AWTIOEngine(override val width:Int, override val height:Int) : IOEngine {
+@Deprecated("This engine isn't actively maintained")
+abstract class AWTIOEngine(override val width:Int, override val height:Int) : IOEngine {
     override val resourceManager by ResourceManagerDelegate()
     private val logger = consoleLogger(javaClass)
     private var canvas: Canvas = Canvas()

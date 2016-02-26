@@ -7,7 +7,8 @@ import rxg.logger.consoleLogger
 import rxg.resource.ResourceManager
 import java.util.concurrent.TimeUnit
 
-class NopRenderer(override val width: Int, override val height: Int) : IOEngine {
+@Deprecated("This engine isn't actively maintained")
+abstract class NopRenderer(override val width: Int, override val height: Int) : IOEngine {
     override val resourceManager:ResourceManager get() = throw NotImplementedError()
 
     private var logger = consoleLogger(javaClass)
