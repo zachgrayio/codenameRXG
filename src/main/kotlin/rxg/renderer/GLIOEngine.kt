@@ -24,11 +24,9 @@ class GLIOEngine(override val width: Int, override val height: Int) : IOEngine {
     override val resourceManager: ResourceManager by ResourceManagerDelegate()
 
     private val keySubject:BehaviorSubject<KeyEvent> = BehaviourSubject()
-
     private var ready:Boolean = false
     private var window:Long? = null
     private var glCapabilities: GLCapabilities? = null
-
     private val errorCallback:GLFWErrorCallback = GLFWErrorCallback.createPrint(System.err)
 
     /**
