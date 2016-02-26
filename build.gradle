@@ -1,0 +1,36 @@
+buildscript {
+    ext.kotlin_version = '1.0.0'
+    ext.rxkotlin_version = '0.40.1'
+    ext.lwjgl_version = '3.0.0b'
+    repositories { mavenCentral() }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'application'
+
+mainClassName = 'demo.MainKt'
+defaultTasks 'run'
+sourceSets {
+    main.kotlin.srcDirs += 'src/main/kotlin'
+    main.java.srcDirs += 'src/main/java'
+    main.resources.srcDirs += 'res/sprite'
+}
+repositories { mavenCentral() }
+dependencies {
+    // LWJGL
+    compile "org.lwjgl:lwjgl:$lwjgl_version"
+    compile "org.lwjgl:lwjgl-platform:$lwjgl_version:natives-windows"
+    compile "org.lwjgl:lwjgl-platform:$lwjgl_version:natives-linux"
+    compile "org.lwjgl:lwjgl-platform:$lwjgl_version:natives-osx"
+    // Kotlin stdlib
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    // RxKotlin
+    compile "io.reactivex:rxkotlin:$rxkotlin_version"
+}
+task wrapper(type: Wrapper) {
+    gradleVersion = "2.11"
+}
+
