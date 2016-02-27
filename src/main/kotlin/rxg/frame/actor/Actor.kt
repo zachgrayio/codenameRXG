@@ -10,16 +10,18 @@ open class Actor(
     var rotation:Float = 0f,
     val size:Size = Size(),
     val speed:Float = 0f,
+    val autoReverseEnabled:Boolean = true,
     val frameIntervalMs:Long = 100,
     val animations: HashMap<String, List<String>> = HashMap(),
     var currentAnimationKey:String?) {
 
     var reverseSprite: Boolean = false
+
     private var _x:Float = 0f
     var x:Float
         get() = _x
         set(value) {
-            reverseSprite = value < _x
+            if(autoReverseEnabled) reverseSprite = value < _x
             _x = value
         }
     var y:Float = 0f

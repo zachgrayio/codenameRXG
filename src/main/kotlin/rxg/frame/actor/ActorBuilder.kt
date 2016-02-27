@@ -7,6 +7,7 @@ class ActorBuilder {
     var rotation:Float = 0f
     var size: Size = Size()
     var speed:Float = 0f
+    var autoReverseEnabled = true
     var frameIntervalMs:Long = 100
     var sprites:List<String> = listOf()
     var currentAnimationKey:String? = null
@@ -16,6 +17,6 @@ class ActorBuilder {
     }
     var animations: HashMap<String, List<String>> = HashMap()
     fun build(): Actor {
-        return Actor(rotation, size, speed, frameIntervalMs, animations, currentAnimationKey)
+        return Actor(rotation, size, speed, autoReverseEnabled, frameIntervalMs, animations, currentAnimationKey)
     }
 }

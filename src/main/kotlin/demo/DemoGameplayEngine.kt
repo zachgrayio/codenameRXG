@@ -20,6 +20,7 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
         size = Size(50f, 50f)
         speed = 0.5f
         frameIntervalMs = 100
+        autoReverseEnabled = true
         animation("stand", default = true) {
             listOf("mario_stand.gif")
         }
