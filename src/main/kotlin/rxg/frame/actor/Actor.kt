@@ -19,8 +19,7 @@ open class Actor(
     var x:Float
         get() = _x
         set(value) {
-            if(value < _x) reverseSprite = true
-            else reverseSprite = false
+            reverseSprite = value < _x
             _x = value
         }
     var y:Float = 0f
