@@ -1,17 +1,13 @@
 package rxg.engine
 
 import rx.Observable
-import rx.lang.kotlin.BehaviourSubject
 import rx.subjects.BehaviorSubject
-import rxg.frame.actor.Actor
-import rxg.frame.actor.ActorBuilder
 import rxg.frame.Frame
 import rxg.frame.Position
+import rxg.frame.actor.Actor
 import rxg.input.KeyActions
 import rxg.input.KeyEvent
 import rxg.input.Keys
-import rxg.resource.ResourceManager
-import rxg.resource.ResourceManagerImpl
 
 interface GameplayEngine {
     /**

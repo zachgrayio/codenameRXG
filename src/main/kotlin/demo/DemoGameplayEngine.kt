@@ -16,6 +16,11 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
 
     // Actors
     //==================================================================================================================
+    // extend all actors in this game
+    var Actor.health: Int by ActorAttribute(initialValue = 3)
+    var Actor.weight: Int by ActorAttribute(initialValue = 0)
+
+    // define the player
     val player = actor {
         size = Size(50f, 50f)
         speed = 0.5f
@@ -30,9 +35,15 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
         animation("crouch") {
             listOf("mario_crouch.gif")
         }
+        health = 3
+        weight = 10
     }
-    // 3 hit points!
-    var Actor.health: Int by ActorAttribute(initialValue = 3)
+
+    // define a guy
+    val guy = actor {
+        size = Size(50f, 50f)
+        animation("crouch") { listOf("mario_crouch.gif") }
+    }
 
     // Gameplay settings
     //==================================================================================================================
@@ -78,5 +89,6 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
 
         // initialize game
         player spawn Position(200f, 200f)
+        guy spawn Position(500f, 200f)
     }
 }

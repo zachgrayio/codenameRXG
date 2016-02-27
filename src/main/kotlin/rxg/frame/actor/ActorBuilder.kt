@@ -3,20 +3,26 @@ package rxg.frame.actor
 import rxg.frame.Size
 import java.util.*
 
-class ActorBuilder {
-    var rotation:Float = 0f
-    var size: Size = Size()
-    var speed:Float = 0f
-    var autoReverseEnabled = true
-    var frameIntervalMs:Long = 100
+class ActorBuilder : Actor {
+    override var x: Float = 0f
+    override var y: Float = 0f
+    override var rotation:Float = 0f
+    override var size: Size = Size()
+    override var speed:Float = 0f
+    override var autoReverseEnabled = true
+    override var frameIntervalMs:Long = 100
+    override var animations: HashMap<String, List<String>> = HashMap()
     var sprites:List<String> = listOf()
-    var currentAnimationKey:String? = null
+    override var currentAnimationKey:String? = null
+    override var reverseSprite: Boolean = false
     fun animation(name:String, default:Boolean = false, closure:()->List<String>) {
         animations.put(name, closure())
         if(default) currentAnimationKey = name
     }
-    var animations: HashMap<String, List<String>> = HashMap()
     fun build(): Actor {
-        return Actor(rotation, size, speed, autoReverseEnabled, frameIntervalMs, animations, currentAnimationKey)
+        return ActorImpl(rotation, size, speed, autoReverseEnabled, frameIntervalMs, animations, currentAnimationKey)
+    }
+    override fun currentSprite(): String {
+        throw UnsupportedOperationException()
     }
 }

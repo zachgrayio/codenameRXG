@@ -1,6 +1,7 @@
 package rxg.frame
 
 import rxg.frame.actor.Actor
+import rxg.frame.actor.ActorImpl
 import rxg.logger.consoleLogger
 
 
