@@ -105,10 +105,13 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
             val spriteBottom = sprite.height.toFloat()
             val spriteLeft = (0.0f - spriteRight)
             val spriteTop = (0.0f)
+
             glPushMatrix()
-            glTranslatef(x, y - sprite.height * 2, 0f)
-            glRotatef(rotation, 0.0f, 0.0f, 1.0f)
+
             glScalef(scale, scale, 0.0f)
+            glTranslatef(x, y - sprite.height, 0f)
+            glRotatef(rotation, 0.0f, 0.0f, 1.0f)
+
             glBegin(GL_QUADS)
                 glTexCoord2f(0.0f, 0.0f)
                 glVertex2f(spriteLeft, spriteTop)
@@ -122,6 +125,7 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
                 glTexCoord2f(0.0f, 1.0f)
                 glVertex2f(spriteLeft, spriteBottom)
             glEnd()
+
             glPopMatrix()
         }
 
@@ -155,8 +159,6 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         glOrtho(0.0, width.toDouble(), height.toDouble(), 0.toDouble(), 1.toDouble(), -1.toDouble())
-
-
 
         val texID = glGenTextures()
         glBindTexture(GL_TEXTURE_2D, texID)
