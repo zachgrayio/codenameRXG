@@ -91,6 +91,7 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
             val rotation = it.rotation
             // sprite
             val sprite = resourceManager.getByteBufferSprite(it.currentSprite())
+            val reverseSprite = it.reverseSprite
             if (sprite.comp == 3) {
                 if ((sprite.width and 3) != 0)
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (sprite.width and 1))
@@ -104,7 +105,9 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
             val spriteRight = (sprite.width.toFloat() / 2)
             val spriteBottom = sprite.height.toFloat()
             val spriteLeft = (0.0f - spriteRight)
-            val spriteTop = (0.0f)
+            val spriteTop = 0.0f
+            val texLeft = if(reverseSprite) 1.0f else 0.0f
+            val texRight = if(reverseSprite) 0.0f else 1.0f
 
             glPushMatrix()
 
@@ -113,16 +116,16 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
             glRotatef(rotation, 0.0f, 0.0f, 1.0f)
 
             glBegin(GL_QUADS)
-                glTexCoord2f(0.0f, 0.0f)
+                glTexCoord2f(texLeft, 0.0f)
                 glVertex2f(spriteLeft, spriteTop)
 
-                glTexCoord2f(1.0f, 0.0f)
+                glTexCoord2f(texRight, 0.0f)
                 glVertex2f(spriteRight, spriteTop)
 
-                glTexCoord2f(1.0f, 1.0f)
+                glTexCoord2f(texRight, 1.0f)
                 glVertex2f(spriteRight, spriteBottom)
 
-                glTexCoord2f(0.0f, 1.0f)
+                glTexCoord2f(texLeft, 1.0f)
                 glVertex2f(spriteLeft, spriteBottom)
             glEnd()
 

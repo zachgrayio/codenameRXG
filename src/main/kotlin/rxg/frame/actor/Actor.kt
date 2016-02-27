@@ -2,20 +2,28 @@ package rxg.frame.actor
 
 import rx.Observable
 import rx.subjects.BehaviorSubject
+import rxg.frame.Size
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 open class Actor(
-    var x:Float = 0f,
-    var y:Float = 0f,
     var rotation:Float = 0f,
-    val size:Size = Actor.Size(),
+    val size:Size = Size(),
     val speed:Float = 0f,
     val frameIntervalMs:Long = 100,
     val animations: HashMap<String, List<String>> = HashMap(),
     var currentAnimationKey:String?) {
 
-    data class Size(var x:Float = 0f, var y:Float = 0f)
+    var reverseSprite: Boolean = false
+    private var _x:Float = 0f
+    var x:Float
+        get() = _x
+        set(value) {
+            if(value < _x) reverseSprite = true
+            else reverseSprite = false
+            _x = value
+        }
+    var y:Float = 0f
 
     private val frameSpriteSubject = BehaviorSubject.create<String>()
     private var singleSprite:String? = null
@@ -34,13 +42,12 @@ open class Actor(
                 return
             }
         }
-        var sprites:List<String>?
         var frameIndex = -1
         Observable.interval(frameIntervalMs, TimeUnit.MILLISECONDS)
             .map {
-                sprites = animations[currentAnimationKey]
+                val sprites = animations[currentAnimationKey]
                 if(frameIndex + 1 >= sprites!!.count()) frameIndex = -1
-                sprites!![++frameIndex]
+                sprites[++frameIndex]
             }
             .subscribe(frameSpriteSubject)
     }

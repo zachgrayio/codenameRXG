@@ -1,6 +1,7 @@
 package demo
 
 import rxg.frame.Position
+import rxg.frame.Size
 import rxg.frame.actor.Actor
 import rxg.frame.actor.ActorAttribute
 import rxg.frame.actor.actor
@@ -16,7 +17,7 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     // Actors
     //==================================================================================================================
     val player = actor {
-        size = Actor.Size(50f,50f)
+        size = Size(50f, 50f)
         speed = 0.5f
         frameIntervalMs = 100
         animation("stand", default = true) {
