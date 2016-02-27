@@ -85,13 +85,19 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
         frame.actors.forEach {
-            // position
             val x = it.x
             val y = it.y
             val rotation = it.rotation
-            // sprite
             val sprite = resourceManager.getByteBufferSprite(it.currentSprite())
             val reverseSprite = it.reverseSprite
+            val spriteRight = (sprite.width.toFloat() / 2)
+            val spriteBottom = sprite.height.toFloat()
+            val spriteLeft = (0.0f - spriteRight)
+            val spriteTop = 0.0f
+            val texLeft = if(reverseSprite) 1.0f else 0.0f
+            val texRight = if(reverseSprite) 0.0f else 1.0f
+
+            // set sprite as texture image
             if (sprite.comp == 3) {
                 if ((sprite.width and 3) != 0)
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (sprite.width and 1))
@@ -101,14 +107,8 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
                 glEnable(GL_BLEND)
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
             }
-            // render sprite
-            val spriteRight = (sprite.width.toFloat() / 2)
-            val spriteBottom = sprite.height.toFloat()
-            val spriteLeft = (0.0f - spriteRight)
-            val spriteTop = 0.0f
-            val texLeft = if(reverseSprite) 1.0f else 0.0f
-            val texRight = if(reverseSprite) 0.0f else 1.0f
 
+            // draw sprite on a textured quad
             glPushMatrix()
 
             glScalef(scale, scale, 0.0f)
@@ -132,6 +132,7 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
             glPopMatrix()
         }
 
+        // render
         glfwSwapBuffers(window!!)
     }
 
