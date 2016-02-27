@@ -3,8 +3,9 @@ package rxg.engine
 import rx.Observable
 import rx.subjects.BehaviorSubject
 import rxg.frame.Frame
-import rxg.frame.Position
 import rxg.frame.actor.Actor
+import rxg.frame.actor.Force
+import rxg.frame.actor.Position
 import rxg.input.KeyActions
 import rxg.input.KeyEvent
 import rxg.input.Keys
@@ -33,7 +34,7 @@ interface GameplayEngine {
     /**
      * Get the actor list from the frame pointer
      */
-    fun actors(): List<Actor> = framePointer.actors
+    val actors: List<Actor> get() = framePointer.actors
 
     /**
      * Actor infix operators
@@ -79,7 +80,41 @@ interface GameplayEngine {
     }
 
     infix fun Actor.play(value:String): Actor {
+        if(previousAnimationKey != null && previousAnimationKey != value)
+            previousAnimationKey = currentAnimationKey
         currentAnimationKey = value
+        return this
+    }
+
+    fun Actor.playPrevious(): Actor {
+        currentAnimationKey = previousAnimationKey ?: defaultAnimationKey ?: animations.keys.first()
+        return this
+    }
+
+    fun Actor.playDefault(): Actor {
+        if(previousAnimationKey != null && previousAnimationKey != defaultAnimationKey)
+            previousAnimationKey = currentAnimationKey
+
+        currentAnimationKey = defaultAnimationKey ?: animations.keys.first()
+        return this
+    }
+
+    infix fun List<Actor>.applyForce(force:Force) {
+        actors.forEach {
+            it.apply {
+                x += force.x.times(framePointer.delta)
+                y += force.y.times(framePointer.delta)
+                force.forceClosure(it)
+            }
+        }
+    }
+
+    infix fun Actor.applyForce(force:Force): Actor {
+       apply {
+           x += force.x.times(framePointer.delta)
+           y += force.y.times(framePointer.delta)
+           force.forceClosure(this)
+        }
         return this
     }
 
@@ -125,7 +160,7 @@ interface GameplayEngine {
             .subscribe { closure() }
     }
 
-    infix fun MutableList<KeyEvent>.does(closure:()->Any) {
+    infix fun List<KeyEvent>.does(closure:()->Any) {
         keySubject
             .filter { event -> any { it.key == event.key && it.keyAction == event.keyAction} }
             .subscribe { closure() }

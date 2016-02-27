@@ -1,9 +1,13 @@
 package rxg.frame.actor
 
-import rxg.frame.Size
 import java.util.*
 
 class ActorBuilder : Actor {
+    override var previousAnimationKey: String?
+        get() = throw UnsupportedOperationException()
+        set(value) { }
+
+    override var defaultAnimationKey: String? = null
     override var x: Float = 0f
     override var y: Float = 0f
     override var rotation:Float = 0f
@@ -17,10 +21,10 @@ class ActorBuilder : Actor {
     override var reverseSprite: Boolean = false
     fun animation(name:String, default:Boolean = false, closure:()->List<String>) {
         animations.put(name, closure())
-        if(default) currentAnimationKey = name
+        if(default) defaultAnimationKey = name
     }
     fun build(): Actor {
-        return ActorImpl(rotation, size, speed, autoReverseEnabled, frameIntervalMs, animations, currentAnimationKey)
+        return ActorImpl(rotation, size, speed, autoReverseEnabled, frameIntervalMs, animations, defaultAnimationKey)
     }
     override fun currentSprite(): String {
         throw UnsupportedOperationException()

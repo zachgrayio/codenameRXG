@@ -1,6 +1,5 @@
 package rxg.frame.actor
 
-import rxg.frame.Size
 import java.util.*
 
 interface Actor {
@@ -13,6 +12,8 @@ interface Actor {
     val frameIntervalMs:Long
     val animations: HashMap<String, List<String>>
     var currentAnimationKey:String?
+    var defaultAnimationKey:String?
+    var previousAnimationKey:String?
     var reverseSprite: Boolean
     fun currentSprite():String
 }

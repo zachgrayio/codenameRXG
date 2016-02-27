@@ -1,8 +1,8 @@
 package rxg.frame.actor
 
 import rx.Observable
+import rx.schedulers.Schedulers
 import rx.subjects.BehaviorSubject
-import rxg.frame.Size
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -13,7 +13,9 @@ open class ActorImpl(
     override val autoReverseEnabled:Boolean = true,
     override val frameIntervalMs:Long = 100,
     override val animations: HashMap<String, List<String>> = HashMap(),
-    override var currentAnimationKey:String?) : Actor {
+    override var defaultAnimationKey: String?) : Actor {
+    override var previousAnimationKey: String? = null
+    override var currentAnimationKey:String? = null
 
     override var reverseSprite: Boolean = false
 
@@ -21,6 +23,7 @@ open class ActorImpl(
     override var x:Float
         get() = _x
         set(value) {
+            if(value == _x) return
             if(autoReverseEnabled) reverseSprite = value < _x
             _x = value
         }
@@ -30,7 +33,7 @@ open class ActorImpl(
     private var singleSprite:String? = null
 
     init {
-        if(currentAnimationKey == null) currentAnimationKey = animations.keys.first()
+        if(currentAnimationKey == null) currentAnimationKey = defaultAnimationKey ?: animations.keys.first()
         initializeAnimation()
     }
 
@@ -50,6 +53,7 @@ open class ActorImpl(
                 if(frameIndex + 1 >= sprites!!.count()) frameIndex = -1
                 sprites[++frameIndex]
             }
+            .subscribeOn(Schedulers.computation())
             .subscribe(frameSpriteSubject)
     }
 
