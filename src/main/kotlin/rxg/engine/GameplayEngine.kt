@@ -35,6 +35,11 @@ interface GameplayEngine {
     fun bindKeyInput(keyEvents: Observable<KeyEvent>) { keyEvents.subscribe(keySubject) }
 
     /**
+     * Get the actor list from the frame pointer
+     */
+    fun actors(): List<Actor> = framePointer.actors
+
+    /**
      * Actor infix operators
      */
     infix fun Actor.moveLeft(value:Float): Actor {
