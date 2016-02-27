@@ -65,19 +65,19 @@ interface GameplayEngine {
         return this
     }
 
-    infix fun Actor.rotatePositive(value:Float):Actor {
+    infix fun Actor.rotatePositive(value:Float): Actor {
         rotation += value.times(framePointer.delta)
         if(rotation > 360.0f) rotation = 0.0f
         return this
     }
 
-    infix fun Actor.rotateNegative(value:Float):Actor {
+    infix fun Actor.rotateNegative(value:Float): Actor {
         rotation -= value.times(framePointer.delta)
         if(rotation < 0.0f) rotation = 360.0f
         return this
     }
 
-    infix fun Actor.play(value:String):Actor {
+    infix fun Actor.play(value:String): Actor {
         currentAnimationKey = value
         return this
     }
@@ -105,15 +105,15 @@ interface GameplayEngine {
     /**
      * Key subject infix operators
      */
-    infix fun Keys.on(action:KeyActions):KeyEvent {
+    infix fun Keys.on(action:KeyActions): KeyEvent {
         return KeyEvent(this, action)
     }
 
-    infix fun KeyEvent.or(action:KeyActions):MutableList<KeyEvent> {
+    infix fun KeyEvent.or(action:KeyActions): MutableList<KeyEvent> {
         return mutableListOf(this, KeyEvent(key, action))
     }
 
-    infix fun MutableList<KeyEvent>.or(action:KeyActions):MutableList<KeyEvent> {
+    infix fun MutableList<KeyEvent>.or(action:KeyActions): MutableList<KeyEvent> {
         this.add(KeyEvent(get(0).key, action))
         return this
     }
