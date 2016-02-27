@@ -14,7 +14,7 @@ fun main(args:Array<String>) {
             300
         }
         ioEngine {
-            GLIOEngine(1024, 768)
+            GLIOEngine(1024, 768, scale = 2.0f)
         }
         gameplayEngine {
             DemoGameplayEngine()

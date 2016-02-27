@@ -37,52 +37,70 @@ interface GameplayEngine {
     /**
      * Actor infix operators
      */
-    infix fun Actor.moveLeft(value:Float) {
+    infix fun Actor.moveLeft(value:Float): Actor {
         x -= value
             .times(speed)
             .times(framePointer.delta)
+        return this
     }
 
-    infix fun Actor.moveRight(value:Float) {
+    infix fun Actor.moveRight(value:Float): Actor {
         x += value
             .times(speed)
             .times(framePointer.delta)
+        return this
     }
 
-    infix fun Actor.moveUp(value:Float) {
+    infix fun Actor.moveUp(value:Float): Actor {
         y -= value
             .times(speed)
             .times(framePointer.delta)
+        return this
     }
 
-    infix fun Actor.moveDown(value:Float) {
+    infix fun Actor.moveDown(value:Float): Actor {
         y += value
             .times(speed)
             .times(framePointer.delta)
+        return this
     }
 
-    infix fun Actor.rotatePositive(value:Float) {
+    infix fun Actor.rotatePositive(value:Float):Actor {
         rotation += value.times(framePointer.delta)
         if(rotation > 360.0f) rotation = 0.0f
+        return this
     }
 
-    infix fun Actor.rotateNegative(value:Float) {
+    infix fun Actor.rotateNegative(value:Float):Actor {
         rotation -= value.times(framePointer.delta)
         if(rotation < 0.0f) rotation = 360.0f
+        return this
+    }
+
+    infix fun Actor.play(value:String):Actor {
+        currentAnimationKey = value
+        return this
     }
 
     /**
      * Actor spawn / despawn
      */
-    infix fun Actor.spawn(position: Position) {
+    infix fun Actor.spawn(position: Position): Actor {
         x = position.x
         y = position.y
         framePointer.actors.add(this)
+        return this
     }
-    fun Actor.spawn() {
+
+    fun Actor.spawn(): Actor {
         framePointer.actors.add(this)
+        return this
     }
-    fun Actor.despawn() { framePointer.actors.remove(this) }
+
+    fun Actor.despawn(): Actor {
+        framePointer.actors.remove(this)
+        return this
+    }
 
     /**
      * Key subject infix operators
@@ -100,13 +118,13 @@ interface GameplayEngine {
         return this
     }
 
-    infix fun KeyEvent.does(closure:()->Unit) {
+    infix fun KeyEvent.does(closure:()->Any) {
         keySubject
             .filter { it.key == key && it.keyAction == keyAction}
             .subscribe { closure() }
     }
 
-    infix fun MutableList<KeyEvent>.does(closure:()->Unit) {
+    infix fun MutableList<KeyEvent>.does(closure:()->Any) {
         keySubject
             .filter { event -> any { it.key == event.key && it.keyAction == event.keyAction} }
             .subscribe { closure() }

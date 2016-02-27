@@ -19,7 +19,7 @@ import rxg.resource.ResourceManagerDelegate
 /**
  * An LWJGL 2D renderer implementation
  */
-class GLIOEngine(override val width: Int, override val height: Int) : IOEngine {
+class GLIOEngine(override val width: Int, override val height: Int, override val scale: Float = 1.0f) : IOEngine {
 
     override val resourceManager: ResourceManager by ResourceManagerDelegate()
 
@@ -101,25 +101,26 @@ class GLIOEngine(override val width: Int, override val height: Int) : IOEngine {
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
             }
             // render sprite
-            val halfWidth = sprite.width.toFloat() / 2
-            val halfHeight = sprite.height.toFloat() / 2
-            val spriteLeft = 0.0f - halfWidth
-            val spriteRight = 0.0f - halfHeight
+            val spriteRight = (sprite.width.toFloat() / 2)
+            val spriteBottom = sprite.height.toFloat()
+            val spriteLeft = (0.0f - spriteRight)
+            val spriteTop = (0.0f)
             glPushMatrix()
-            glTranslatef(x, y, 0f)
+            glTranslatef(x, y - sprite.height * 2, 0f)
             glRotatef(rotation, 0.0f, 0.0f, 1.0f)
+            glScalef(scale, scale, 0.0f)
             glBegin(GL_QUADS)
                 glTexCoord2f(0.0f, 0.0f)
-                glVertex2f(spriteLeft, spriteRight)
+                glVertex2f(spriteLeft, spriteTop)
 
                 glTexCoord2f(1.0f, 0.0f)
-                glVertex2f(halfWidth, spriteRight)
+                glVertex2f(spriteRight, spriteTop)
 
                 glTexCoord2f(1.0f, 1.0f)
-                glVertex2f(halfWidth, halfHeight)
+                glVertex2f(spriteRight, spriteBottom)
 
                 glTexCoord2f(0.0f, 1.0f)
-                glVertex2f(spriteLeft, halfHeight)
+                glVertex2f(spriteLeft, spriteBottom)
             glEnd()
             glPopMatrix()
         }

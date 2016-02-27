@@ -15,14 +15,22 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
 
     // Actors
     //==================================================================================================================
-    val squad = actor {
+    val player = actor {
         size = Actor.Size(50f,50f)
-        speed = 1f
+        speed = 0.5f
         frameIntervalMs = 100
-        sprites = listOf("squad.png")
+        animation("stand", default = true) {
+            listOf("mario_stand.gif")
+        }
+        animation("walk") {
+            listOf("mario_walk_1.gif", "mario_walk_2.gif", "mario_walk_3.gif")
+        }
+        animation("crouch") {
+            listOf("mario_crouch.gif")
+        }
     }
-    // all actors in this game should have health, so lets add an attribute to Actor:
-    var Actor.health: Int by ActorAttribute(initialValue = 100)
+    // 3 hit points!
+    var Actor.health: Int by ActorAttribute(initialValue = 3)
 
     // Gameplay settings
     //==================================================================================================================
@@ -34,19 +42,19 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
 
     // Gameplay functions - simple closures can be used to easily extend the gameplay DSL
     //==================================================================================================================
+    val notPaused:(()->Unit ) -> () -> Unit = { if(!paused) it else { {} } }
     val togglePaused    = { paused = !paused }
-    val gameOver        = { squad.despawn() }
-    val moveSquadUp     = { if(!paused) squad moveUp    step }
-    val moveSquadDown   = { if(!paused) squad moveDown  step }
-    val moveSquadLeft   = { if(!paused) squad moveLeft  step }
-    val moveSquadRight  = { if(!paused) squad moveRight step }
-    val rotateSquadPos  = { if(!paused) squad rotatePositive 0.1f }
-    val rotateSquadNeg  = { if(!paused) squad rotateNegative 0.1f }
+    val gameOver        = { player.despawn() }
+    val jump            = { }
+    val stand           = { player play "stand" }
+    val crouch          = notPaused { player play "crouch" }
+    val moveLeft        = notPaused { player moveLeft step play "walk" }
+    val moveRight       = notPaused { player moveRight step play "walk" }
 
     // Update
     //==================================================================================================================
     override fun update() {
-        when(squad.health) { 0 -> gameOver() }
+        when(player.health) { 0 -> gameOver() }
     }
 
     // Initialization
@@ -54,13 +62,19 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     init {
         // define key bindings
         ESC on RELEASED does togglePaused
-        W on PRESSED does moveSquadUp
-        A on PRESSED does moveSquadLeft
-        S on PRESSED does moveSquadDown
-        D on PRESSED does moveSquadRight
-        Q on PRESSED does rotateSquadNeg
-        E on PRESSED does rotateSquadPos
+
+        W on PRESSED does jump
+
+        A on PRESSED does moveLeft
+        A on RELEASED does stand
+
+        S on PRESSED does crouch
+        S on RELEASED does stand
+
+        D on PRESSED does moveRight
+        D on RELEASED does stand
+
         // initialize game
-        squad spawn Position(200f, 200f)
+        player spawn Position(200f, 200f)
     }
 }
