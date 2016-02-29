@@ -145,7 +145,6 @@ interface GameplayEngine {
     }
 
     fun Actor.spawn(): Actor {
-        framePointer.actors.add(this)
         spawned = true
         return this
     }
