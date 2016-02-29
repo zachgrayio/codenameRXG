@@ -22,9 +22,9 @@ class ActorBuilder : Actor {
     override var reverseSprite: Boolean = false
     override var spawned:Boolean = false
 
-    fun animation(name:String, default:Boolean = false, closure:()->List<String>) {
-        animations.put(name, closure())
-        if(default) defaultAnimationKey = name
+    fun animation(key:String, default:Boolean = false, closure:()->List<String>) {
+        animations.put(key, closure())
+        if(default) defaultAnimationKey = key
     }
     fun build(): Actor {
         return ActorImpl(rotation, size, speedX, speedY, autoReverseEnabled, frameIntervalMs, animations, defaultAnimationKey, spawned)

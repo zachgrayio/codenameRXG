@@ -16,9 +16,9 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     // Gameplay settings
     //==================================================================================================================
     val step = 1f
-    val playerWalkSpeed = 0.4f
-    val playerFlySpeed = 0.2f
-    val playerFlyUpSpeed = 0.3f
+    val walkSpeedX = 0.4f
+    val flySpeedX = 0.2f
+    val flySpeedY = 0.3f
     val ground = 768f // until collision detection is supported, this will have to do
     val gravity = Force(y = 0.2f)
 
@@ -35,15 +35,15 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     // define the player
     val player = actor {
         size = Size(50f, 50f)
-        speedX = playerWalkSpeed
-        speedY = playerFlyUpSpeed
+        speedX = walkSpeedX
+        speedY = flySpeedY
         frameIntervalMs = 100
         autoReverseEnabled = true
-        animation("stand", default = true) { listOf("fire_mario_stand.gif") }
-        animation("walk")   { listOf("fire_mario_walk_1.gif", "fire_mario_walk_2.gif", "fire_mario_walk_3.gif") }
-        animation("crouch") { listOf("fire_mario_crouch.gif") }
-        animation("jump")   { listOf("fire_mario_jump.gif") }
-        animation("swim")   {
+        animation(key = "stand", default = true) { listOf("fire_mario_stand.gif") }
+        animation(key = "walk")   { listOf("fire_mario_walk_1.gif", "fire_mario_walk_2.gif", "fire_mario_walk_3.gif") }
+        animation(key = "crouch") { listOf("fire_mario_crouch.gif") }
+        animation(key = "jump")   { listOf("fire_mario_jump.gif") }
+        animation(key = "swim")   {
             listOf(
                 "fire_mario_swim_1.gif",
                 "fire_mario_swim_2.gif",
@@ -58,21 +58,21 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     // define some goons
     val guy1 = actor {
         size = Size(50f, 50f)
-        animation("stand") { listOf("mario_stand.gif") }
-        animation("crouch", default = true) { listOf("mario_crouch.gif") }
-        animation("jump")   { listOf("mario_jump.gif") }
+        animation(key = "stand") { listOf("mario_stand.gif") }
+        animation(key = "crouch", default = true) { listOf("mario_crouch.gif") }
+        animation(key = "jump")   { listOf("mario_jump.gif") }
     }
     val guy2 = actor {
         size = Size(50f, 50f)
-        animation("stand") { listOf("mario_stand.gif") }
-        animation("crouch", default = true) { listOf("mario_crouch.gif") }
-        animation("jump")   { listOf("mario_jump.gif") }
+        animation(key = "stand") { listOf("mario_stand.gif") }
+        animation(key = "crouch", default = true) { listOf("mario_crouch.gif") }
+        animation(key = "jump")   { listOf("mario_jump.gif") }
     }
     val guy3 = actor {
         size = Size(50f, 50f)
-        animation("stand") { listOf("mario_stand.gif") }
-        animation("crouch", default = true) { listOf("mario_crouch.gif") }
-        animation("jump")   { listOf("mario_jump.gif") }
+        animation(key = "stand") { listOf("mario_stand.gif") }
+        animation(key = "crouch", default = true) { listOf("mario_crouch.gif") }
+        animation(key = "jump")   { listOf("mario_jump.gif") }
     }
 
     // Gameplay functions - simple closures can be used to easily extend the gameplay DSL
@@ -101,8 +101,8 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
         actors onInterval { if(!paused) {
             it.flying = it.y in 0f..ground
             when(it.flying) {
-                true -> it speedX playerFlySpeed applyForce gravity play "jump"
-                false -> it.playPrevious() speedX playerWalkSpeed
+                true -> it speedX flySpeedY applyForce gravity play "jump"
+                false -> it.playPrevious() speedX walkSpeedX
             }
         }}
         player onInterval { if(it.health <= 0) gameOver() }
