@@ -30,7 +30,7 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     //==================================================================================================================
     // extend all actors in this game
     var Actor.health: Int by ActorAttribute({ 3 })
-    var Actor.flying: Boolean by ActorAttribute({ false })
+    val Actor.flying : Boolean get() = y in 0f..ground
 
     // define the player
     val player = actor {
@@ -99,7 +99,6 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
 
         // update actors onInterval
         actors onInterval { if(!paused) {
-            it.flying = it.y in 0f..ground
             when(it.flying) {
                 true -> it speedX flySpeedX applyForce gravity play "jump"
                 false -> it.playPrevious() speedX walkSpeedX
