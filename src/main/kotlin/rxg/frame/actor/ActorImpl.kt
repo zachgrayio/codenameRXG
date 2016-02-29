@@ -8,12 +8,15 @@ import java.util.concurrent.TimeUnit
 
 open class ActorImpl(
     override var rotation:Float = 0f,
-    override val size:Size = Size(),
-    override val speed:Float = 0f,
+    override var size:Size = Size(),
+    override var speedX:Float = 1f,
+    override var speedY:Float = 1f,
     override val autoReverseEnabled:Boolean = true,
     override val frameIntervalMs:Long = 100,
     override val animations: HashMap<String, List<String>> = HashMap(),
-    override var defaultAnimationKey: String?) : Actor {
+    override var defaultAnimationKey: String?)
+: Actor {
+
     override var previousAnimationKey: String? = null
     override var currentAnimationKey:String? = null
 

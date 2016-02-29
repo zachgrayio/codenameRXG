@@ -37,32 +37,32 @@ interface GameplayEngine {
     val actors: List<Actor> get() = framePointer.actors
 
     /**
-     * Actor infix operators
+     * Actor extensions & infix operators
      */
     infix fun Actor.moveLeft(value:Float): Actor {
         x -= value
-            .times(speed)
+            .times(speedX)
             .times(framePointer.delta)
         return this
     }
 
     infix fun Actor.moveRight(value:Float): Actor {
         x += value
-            .times(speed)
+            .times(speedX)
             .times(framePointer.delta)
         return this
     }
 
     infix fun Actor.moveUp(value:Float): Actor {
         y -= value
-            .times(speed)
+            .times(speedY)
             .times(framePointer.delta)
         return this
     }
 
     infix fun Actor.moveDown(value:Float): Actor {
         y += value
-            .times(speed)
+            .times(speedY)
             .times(framePointer.delta)
         return this
     }
@@ -83,6 +83,16 @@ interface GameplayEngine {
         if(previousAnimationKey != null && previousAnimationKey != value)
             previousAnimationKey = currentAnimationKey
         currentAnimationKey = value
+        return this
+    }
+
+    infix fun Actor.speedX(value:Float): Actor {
+        speedX = value
+        return this
+    }
+
+    infix fun Actor.speedY(value:Float): Actor {
+        speedY = value
         return this
     }
 
@@ -118,9 +128,6 @@ interface GameplayEngine {
         return this
     }
 
-    /**
-     * Actor spawn / despawn
-     */
     infix fun Actor.spawn(position: Position): Actor {
         x = position.x
         y = position.y

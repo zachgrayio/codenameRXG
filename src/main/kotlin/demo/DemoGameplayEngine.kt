@@ -10,16 +10,30 @@ import rxg.preset.SimpleGameplayEngine
  */
 class DemoGameplayEngine() : SimpleGameplayEngine() {
 
+    // Gameplay settings
+    //==================================================================================================================
+    val step = 1f
+    val playerWalkSpeed = 0.4f
+    val playerFlySpeed = 0.2f
+    val playerFlyUpSpeed = 0.3f
+    val ground = 768f // until collision detection is supported, this will have to do
+    val gravity = Force(y = 0.2f)
+
+    // Gameplay states
+    //==================================================================================================================
+    var paused = false
+
     // Actors
     //==================================================================================================================
     // extend all actors in this game
     var Actor.health: Int by ActorAttribute(initialValue = 3)
-    var Actor.falling: Boolean by ActorAttribute(initialValue = false)
+    var Actor.flying: Boolean by ActorAttribute(initialValue = false)
 
     // define the player
     val player = actor {
         size = Size(50f, 50f)
-        speed = 0.5f
+        speedX = playerWalkSpeed
+        speedY = playerFlyUpSpeed
         frameIntervalMs = 100
         autoReverseEnabled = true
         animation("stand", default = true) { listOf("fire_mario_stand.gif") }
@@ -58,16 +72,6 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
         animation("jump")   { listOf("mario_jump.gif") }
     }
 
-    // Gameplay settings
-    //==================================================================================================================
-    val step = 1f
-    val ground = 768f // until collision detection is supported, this will have to do
-    val gravity = Force(y = 0.2f)
-
-    // Gameplay states
-    //==================================================================================================================
-    var paused = false
-
     // Gameplay functions - simple closures can be used to easily extend the gameplay DSL
     //==================================================================================================================
     val notPaused:(()->Unit ) -> () -> Unit = { if(!paused) it else { {} } }
@@ -75,19 +79,19 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     val gameOver        = { player.despawn() }
 
     val stand = { player play "stand" }
-    val playerMoveAnimation = { if(player.falling) "swim" else "walk" }
+    val playerMoveAnimation = { if(player.flying) "swim" else "walk" }
 
     // Update
     //==================================================================================================================
     override fun update() {
         actors.forEach {
             when(it.y) {
-                in 0f..ground -> it.falling = true
-                else -> it.falling = false
+                in 0f..ground -> it.flying = true
+                else -> it.flying = false
             }
-            when(it.falling) {
-                true -> it applyForce gravity play "jump"
-                false -> it.playPrevious()
+            when(it.flying) {
+                true -> it speedX playerFlySpeed applyForce gravity play "jump"
+                false -> it.playPrevious() speedX playerWalkSpeed
             }
         }
         when(player.health) { 0 -> gameOver() }
