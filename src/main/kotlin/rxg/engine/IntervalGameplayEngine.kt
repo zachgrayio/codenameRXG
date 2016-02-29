@@ -10,10 +10,10 @@ import java.util.concurrent.TimeUnit
 interface IntervalGameplayEngine : GameplayEngine {
     val interval:Long
     val timeUnit: TimeUnit
-    fun update()
+    fun onInterval()
     override fun frameOutput(): Observable<Frame> {
         return Observable.interval(interval, timeUnit)
-            .doOnNext { update() }
+            .doOnNext { onInterval() }
             .map { framePointer }
     }
 }

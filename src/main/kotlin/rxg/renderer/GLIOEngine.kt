@@ -84,7 +84,7 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
 
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-        frame.actors.forEach {
+        frame.actors.filter { it.spawned }.forEach {
             val x = it.x
             val y = it.y
             val rotation = it.rotation

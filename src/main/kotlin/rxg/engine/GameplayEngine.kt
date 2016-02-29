@@ -4,6 +4,7 @@ import rx.Observable
 import rx.subjects.BehaviorSubject
 import rxg.frame.Frame
 import rxg.frame.actor.Actor
+import rxg.frame.actor.ActorBuilder
 import rxg.frame.actor.Force
 import rxg.frame.actor.Position
 import rxg.input.KeyActions
@@ -39,6 +40,14 @@ interface GameplayEngine {
     /**
      * Actor extensions & infix operators
      */
+    fun actor(init: ActorBuilder.()->Unit): Actor {
+        val builder = ActorBuilder()
+        builder.init()
+        val actor = builder.build()
+        this.framePointer.actors.add(actor)
+        return actor
+    }
+
     infix fun Actor.moveLeft(value:Float): Actor {
         x -= value
             .times(speedX)
@@ -131,17 +140,18 @@ interface GameplayEngine {
     infix fun Actor.spawn(position: Position): Actor {
         x = position.x
         y = position.y
-        framePointer.actors.add(this)
+        spawned = true
         return this
     }
 
     fun Actor.spawn(): Actor {
         framePointer.actors.add(this)
+        spawned = true
         return this
     }
 
     fun Actor.despawn(): Actor {
-        framePointer.actors.remove(this)
+        spawned = false
         return this
     }
 

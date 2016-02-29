@@ -14,12 +14,12 @@ open class ActorImpl(
     override val autoReverseEnabled:Boolean = true,
     override val frameIntervalMs:Long = 100,
     override val animations: HashMap<String, List<String>> = HashMap(),
-    override var defaultAnimationKey: String?)
+    override var defaultAnimationKey: String?,
+    override var spawned: Boolean = false)
 : Actor {
 
     override var previousAnimationKey: String? = null
     override var currentAnimationKey:String? = null
-
     override var reverseSprite: Boolean = false
 
     private var _x:Float = 0f

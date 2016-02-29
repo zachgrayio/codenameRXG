@@ -16,5 +16,6 @@ interface Actor {
     var defaultAnimationKey:String?
     var previousAnimationKey:String?
     var reverseSprite: Boolean
+    var spawned: Boolean
     fun currentSprite():String
 }

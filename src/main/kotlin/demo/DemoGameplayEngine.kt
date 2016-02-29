@@ -29,8 +29,8 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     // Actors
     //==================================================================================================================
     // extend all actors in this game
-    var Actor.health: Int by ActorAttribute(initialValue = 3)
-    var Actor.flying: Boolean by ActorAttribute(initialValue = false)
+    var Actor.health: Int by ActorAttribute({ 3 })
+    var Actor.flying: Boolean by ActorAttribute({ false })
 
     // define the player
     val player = actor {
@@ -83,40 +83,29 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     val stand = { player play "stand" }
     val playerMoveAnimation = { if(player.flying) "swim" else "walk" }
 
-    // Update
-    //==================================================================================================================
-    override fun update() {
-        actors.forEach {
-            when(it.y) {
-                in 0f..ground -> it.flying = true
-                else -> it.flying = false
-            }
-            when(it.flying) {
-                true -> it speedX playerFlySpeed applyForce gravity play "jump"
-                false -> it.playPrevious() speedX playerWalkSpeed
-            }
-        }
-        when(player.health) { 0 -> gameOver() }
-    }
-
     // Initialization
     //==================================================================================================================
     init {
         // define key bindings
         ESC on RELEASED does togglePaused
-
         SPACE on PRESSED does { /* todo: jump */ }
-
         W on PRESSED does ifNot(paused) { player moveUp step play "swim" }
-
         A on PRESSED does ifNot(paused) { player moveLeft step play playerMoveAnimation() }
         A on RELEASED does stand
-
         S on PRESSED does ifNot(paused) { player play "crouch" }
         S on RELEASED does stand
-
         D on PRESSED does ifNot(paused) { player moveRight step play playerMoveAnimation() }
         D on RELEASED does stand
+
+        // update actors onInterval
+        actors onInterval { if(!paused) {
+            it.flying = it.y in 0f..ground
+            when(it.flying) {
+                true -> it speedX playerFlySpeed applyForce gravity play "jump"
+                false -> it.playPrevious() speedX playerWalkSpeed
+            }
+        }}
+        player onInterval { if(it.health <= 0) gameOver() }
 
         // initialize game
         player spawn Position(25f, ground)

@@ -20,12 +20,14 @@ class ActorBuilder : Actor {
     var sprites:List<String> = listOf()
     override var currentAnimationKey:String? = null
     override var reverseSprite: Boolean = false
+    override var spawned:Boolean = false
+
     fun animation(name:String, default:Boolean = false, closure:()->List<String>) {
         animations.put(name, closure())
         if(default) defaultAnimationKey = name
     }
     fun build(): Actor {
-        return ActorImpl(rotation, size, speedX, speedY, autoReverseEnabled, frameIntervalMs, animations, defaultAnimationKey)
+        return ActorImpl(rotation, size, speedX, speedY, autoReverseEnabled, frameIntervalMs, animations, defaultAnimationKey, spawned)
     }
     override fun currentSprite(): String {
         throw UnsupportedOperationException()
