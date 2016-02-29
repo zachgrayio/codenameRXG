@@ -101,7 +101,7 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
         actors onInterval { if(!paused) {
             it.flying = it.y in 0f..ground
             when(it.flying) {
-                true -> it speedX flySpeedY applyForce gravity play "jump"
+                true -> it speedX flySpeedX applyForce gravity play "jump"
                 false -> it.playPrevious() speedX walkSpeedX
             }
         }}
