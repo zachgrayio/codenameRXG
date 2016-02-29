@@ -1,5 +1,8 @@
 package demo
 
+import rxg.dsl.GameplayDSL
+import rxg.dsl.GameplayDSL.ifIs
+import rxg.dsl.GameplayDSL.ifNot
 import rxg.frame.actor.*
 import rxg.input.KeyActions.*
 import rxg.input.Keys.*
@@ -74,7 +77,6 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
 
     // Gameplay functions - simple closures can be used to easily extend the gameplay DSL
     //==================================================================================================================
-    val notPaused:(()->Unit ) -> () -> Unit = { if(!paused) it else { {} } }
     val togglePaused    = { paused = !paused }
     val gameOver        = { player.despawn() }
 
@@ -105,15 +107,15 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
 
         SPACE on PRESSED does { /* todo: jump */ }
 
-        W on PRESSED does notPaused { player moveUp step play "swim" }
+        W on PRESSED does ifNot(paused) { player moveUp step play "swim" }
 
-        A on PRESSED does notPaused { player moveLeft step play playerMoveAnimation() }
+        A on PRESSED does ifNot(paused) { player moveLeft step play playerMoveAnimation() }
         A on RELEASED does stand
 
-        S on PRESSED does notPaused { player play "crouch" }
+        S on PRESSED does ifNot(paused) { player play "crouch" }
         S on RELEASED does stand
 
-        D on PRESSED does notPaused { player moveRight step play playerMoveAnimation() }
+        D on PRESSED does ifNot(paused) { player moveRight step play playerMoveAnimation() }
         D on RELEASED does stand
 
         // initialize game
