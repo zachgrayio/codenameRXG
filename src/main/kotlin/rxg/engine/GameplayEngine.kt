@@ -88,10 +88,10 @@ interface GameplayEngine {
         return this
     }
 
-    infix fun Actor.play(value:String): Actor {
-        if(previousAnimationKey != null && previousAnimationKey != value)
+    infix fun Actor.play(key:String): Actor {
+        if(previousAnimationKey != null && previousAnimationKey != key)
             previousAnimationKey = currentAnimationKey
-        currentAnimationKey = value
+        currentAnimationKey = key
         return this
     }
 
