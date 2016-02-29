@@ -16,7 +16,7 @@ defaultTasks 'run'
 sourceSets {
     main.kotlin.srcDirs += 'src/main/kotlin'
     main.java.srcDirs += 'src/main/java'
-    main.resources.srcDirs += 'res/sprite'
+    main.resources.srcDirs += 'res'
 }
 repositories { mavenCentral() }
 dependencies {
@@ -32,5 +32,16 @@ dependencies {
 }
 task wrapper(type: Wrapper) {
     gradleVersion = "2.11"
+}
+
+distributions {
+    main {
+        contents {
+            from('res') {
+                include '**/*.*'
+                into "bin/res"
+            }
+        }
+    }
 }
 
