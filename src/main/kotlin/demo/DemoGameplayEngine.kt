@@ -6,6 +6,7 @@ import rxg.dsl.GameplayDSL.ifNot
 import rxg.frame.actor.*
 import rxg.input.KeyActions.*
 import rxg.input.Keys.*
+import rxg.logger.consoleLogger
 import rxg.preset.SimpleGameplayEngine
 
 /**
@@ -13,13 +14,17 @@ import rxg.preset.SimpleGameplayEngine
  */
 class DemoGameplayEngine() : SimpleGameplayEngine() {
 
+    // logger
+    val logger = consoleLogger(javaClass)
+
     // Gameplay settings
     //==================================================================================================================
+    override val gameSpeed: Float = 1.0f
     val step = 1f
     val walkSpeedX = 0.4f
     val flySpeedX = 0.2f
     val flySpeedY = 0.3f
-    val ground = 768f // until collision detection is supported, this will have to do
+    val ground = 768f
     val gravity = Force(y = 0.2f)
 
     // Gameplay states
@@ -34,7 +39,7 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
 
     // define the player
     val player = actor {
-        size = Size(50f, 50f)
+        size = Size(30f, 60f)
         speedX = walkSpeedX
         speedY = flySpeedY
         frameIntervalMs = 100
@@ -57,19 +62,19 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     }
     // define some goons
     val guy1 = actor {
-        size = Size(50f, 50f)
+        size = Size(30f, 45f)
         animation(key = "stand") { listOf("mario_stand.gif") }
         animation(key = "crouch", default = true) { listOf("mario_crouch.gif") }
         animation(key = "jump")   { listOf("mario_jump.gif") }
     }
     val guy2 = actor {
-        size = Size(50f, 50f)
+        size = Size(30f, 45f)
         animation(key = "stand") { listOf("mario_stand.gif") }
         animation(key = "crouch", default = true) { listOf("mario_crouch.gif") }
         animation(key = "jump")   { listOf("mario_jump.gif") }
     }
     val guy3 = actor {
-        size = Size(50f, 50f)
+        size = Size(30f, 45f)
         animation(key = "stand") { listOf("mario_stand.gif") }
         animation(key = "crouch", default = true) { listOf("mario_crouch.gif") }
         animation(key = "jump")   { listOf("mario_jump.gif") }
@@ -105,6 +110,11 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
             }
         }}
         player onInterval { if(it.health <= 0) gameOver() }
+
+        // define some collision logic
+        player onCollision { other ->
+            other.despawn()
+        }
 
         // initialize game
         player spawn Position(25f, ground)
