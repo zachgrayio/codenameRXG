@@ -19,11 +19,12 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
 
     // Gameplay settings
     //==================================================================================================================
+    override val gameSpeed: Float = 1.0f
     val step = 1f
     val walkSpeedX = 0.4f
     val flySpeedX = 0.2f
     val flySpeedY = 0.3f
-    val ground = 768f // until collision detection is supported, this will have to do
+    val ground = 768f
     val gravity = Force(y = 0.2f)
 
     // Gameplay states
@@ -107,11 +108,13 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
                 true -> it speedX flySpeedX applyForce gravity play "jump"
                 false -> it.playPrevious() speedX walkSpeedX
             }
-            intervalCollisions.forEach { pair ->
-                //logger.log("collision", "actor ${pair.first} collided with ${pair.second}")
-            }
         }}
         player onInterval { if(it.health <= 0) gameOver() }
+
+        // define some collision logic
+        player onCollision { other ->
+            other.despawn()
+        }
 
         // initialize game
         player spawn Position(25f, ground)

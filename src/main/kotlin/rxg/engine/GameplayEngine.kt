@@ -18,6 +18,16 @@ interface GameplayEngine {
     val framePointer:Frame
 
     /**
+     * Get the actor list from the frame pointer
+     */
+    val actors: List<Actor> get() = framePointer.actors
+
+    /**
+     * The game speed
+     */
+    val gameSpeed: Float
+
+    /**
      * A gameplay engine should have a key subject
      */
     val keySubject: BehaviorSubject<KeyEvent>
@@ -33,11 +43,6 @@ interface GameplayEngine {
     fun bindKeyInput(keyEvents: Observable<KeyEvent>) { keyEvents.subscribe(keySubject) }
 
     /**
-     * Get the actor list from the frame pointer
-     */
-    val actors: List<Actor> get() = framePointer.actors
-
-    /**
      * Actor extensions & infix operators
      */
     fun actor(init: ActorBuilder.()->Unit): Actor {
@@ -51,6 +56,7 @@ interface GameplayEngine {
     infix fun Actor.moveLeft(value:Float): Actor {
         x -= value
             .times(speedX)
+            .times(gameSpeed)
             .times(framePointer.delta)
         return this
     }
@@ -58,6 +64,7 @@ interface GameplayEngine {
     infix fun Actor.moveRight(value:Float): Actor {
         x += value
             .times(speedX)
+            .times(gameSpeed)
             .times(framePointer.delta)
         return this
     }
@@ -65,6 +72,7 @@ interface GameplayEngine {
     infix fun Actor.moveUp(value:Float): Actor {
         y -= value
             .times(speedY)
+            .times(gameSpeed)
             .times(framePointer.delta)
         return this
     }
@@ -72,18 +80,19 @@ interface GameplayEngine {
     infix fun Actor.moveDown(value:Float): Actor {
         y += value
             .times(speedY)
+            .times(gameSpeed)
             .times(framePointer.delta)
         return this
     }
 
     infix fun Actor.rotatePositive(value:Float): Actor {
-        rotation += value.times(framePointer.delta)
+        rotation += value.times(gameSpeed).times(framePointer.delta)
         if(rotation > 360.0f) rotation = 0.0f
         return this
     }
 
     infix fun Actor.rotateNegative(value:Float): Actor {
-        rotation -= value.times(framePointer.delta)
+        rotation -= value.times(gameSpeed).times(framePointer.delta)
         if(rotation < 0.0f) rotation = 360.0f
         return this
     }
@@ -121,8 +130,8 @@ interface GameplayEngine {
     infix fun List<Actor>.applyForce(force:Force) {
         actors.forEach {
             it.apply {
-                x += force.x.times(framePointer.delta)
-                y += force.y.times(framePointer.delta)
+                x += force.x.times(gameSpeed).times(framePointer.delta)
+                y += force.y.times(gameSpeed).times(framePointer.delta)
                 force.forceClosure(it)
             }
         }
@@ -130,8 +139,8 @@ interface GameplayEngine {
 
     infix fun Actor.applyForce(force:Force): Actor {
        apply {
-           x += force.x.times(framePointer.delta)
-           y += force.y.times(framePointer.delta)
+           x += force.x.times(gameSpeed).times(framePointer.delta)
+           y += force.y.times(gameSpeed).times(framePointer.delta)
            force.forceClosure(this)
         }
         return this

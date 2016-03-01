@@ -98,7 +98,7 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
             val texRight = if(reverseSprite) 0.0f else 1.0f
 
             // hitbox
-            val drawHitbox = false // todo: parameterize
+            val drawHitbox = true // todo: parameterize
             val hitboxSize = it.size
             val hitboxRight = hitboxSize.x / 2
             val hitboxBottom = hitboxSize.y
