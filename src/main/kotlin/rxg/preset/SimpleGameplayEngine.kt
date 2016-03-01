@@ -17,8 +17,13 @@ abstract class SimpleGameplayEngine : IntervalGameplayEngine {
 
     var Actor.intervalClosures: MutableList<(Actor)->Unit> by ActorAttribute<MutableList<(Actor)->Unit>>(initialValueClosure = { mutableListOf() })
 
+    private var _intervalCollisions:List<Pair<Actor, Actor>> = listOf()
+    val intervalCollisions:List<Pair<Actor, Actor>>
+        get() = _intervalCollisions
+
     override fun onInterval() {
         actors.forEach { actor -> actor.intervalClosures.forEach { it(actor) } }
+        _intervalCollisions = framePointer.actorCollisions()
     }
 
     infix fun Actor.onInterval(closure:(Actor)->Unit): Actor {

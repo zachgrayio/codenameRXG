@@ -97,6 +97,14 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
             val texLeft = if(reverseSprite) 1.0f else 0.0f
             val texRight = if(reverseSprite) 0.0f else 1.0f
 
+            // hitbox
+            val drawHitbox = false // todo: parameterize
+            val hitboxSize = it.size
+            val hitboxRight = hitboxSize.x / 2
+            val hitboxBottom = hitboxSize.y
+            val hitboxLeft = 0.0f - hitboxRight
+            val hitboxTop = 0.0f
+
             // set sprite as texture image
             if (sprite.comp == 3) {
                 if ((sprite.width and 3) != 0)
@@ -128,6 +136,22 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
                 glTexCoord2f(texLeft, 1.0f)
                 glVertex2f(spriteLeft, spriteBottom)
             glEnd()
+
+            if(drawHitbox) {
+                glPushMatrix()
+                glColor3f(0.0f, 0.0f, 1.0f)
+                glLineWidth(4.0f)
+                glBegin(GL_LINE_STRIP)
+                glVertex2f(hitboxLeft, hitboxTop)
+                glVertex2f(hitboxRight, hitboxTop)
+
+                glVertex2f(hitboxRight, hitboxBottom)
+                glVertex2f(hitboxLeft, hitboxBottom)
+
+                glVertex2f(hitboxLeft, hitboxTop)
+                glEnd()
+                glPopMatrix()
+            }
 
             glPopMatrix()
         }

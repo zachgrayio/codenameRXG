@@ -6,12 +6,16 @@ import rxg.dsl.GameplayDSL.ifNot
 import rxg.frame.actor.*
 import rxg.input.KeyActions.*
 import rxg.input.Keys.*
+import rxg.logger.consoleLogger
 import rxg.preset.SimpleGameplayEngine
 
 /**
  * A simple gameplay system based on an interval-based engine which generates 1,000 gameplay frames each second.
  */
 class DemoGameplayEngine() : SimpleGameplayEngine() {
+
+    // logger
+    val logger = consoleLogger(javaClass)
 
     // Gameplay settings
     //==================================================================================================================
@@ -34,7 +38,7 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
 
     // define the player
     val player = actor {
-        size = Size(50f, 50f)
+        size = Size(30f, 60f)
         speedX = walkSpeedX
         speedY = flySpeedY
         frameIntervalMs = 100
@@ -57,19 +61,19 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     }
     // define some goons
     val guy1 = actor {
-        size = Size(50f, 50f)
+        size = Size(30f, 45f)
         animation(key = "stand") { listOf("mario_stand.gif") }
         animation(key = "crouch", default = true) { listOf("mario_crouch.gif") }
         animation(key = "jump")   { listOf("mario_jump.gif") }
     }
     val guy2 = actor {
-        size = Size(50f, 50f)
+        size = Size(30f, 45f)
         animation(key = "stand") { listOf("mario_stand.gif") }
         animation(key = "crouch", default = true) { listOf("mario_crouch.gif") }
         animation(key = "jump")   { listOf("mario_jump.gif") }
     }
     val guy3 = actor {
-        size = Size(50f, 50f)
+        size = Size(30f, 45f)
         animation(key = "stand") { listOf("mario_stand.gif") }
         animation(key = "crouch", default = true) { listOf("mario_crouch.gif") }
         animation(key = "jump")   { listOf("mario_jump.gif") }
@@ -102,6 +106,9 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
             when(it.flying) {
                 true -> it speedX flySpeedX applyForce gravity play "jump"
                 false -> it.playPrevious() speedX walkSpeedX
+            }
+            intervalCollisions.forEach { pair ->
+                //logger.log("collision", "actor ${pair.first} collided with ${pair.second}")
             }
         }}
         player onInterval { if(it.health <= 0) gameOver() }
