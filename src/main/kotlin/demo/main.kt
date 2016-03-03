@@ -11,7 +11,7 @@ fun main(args:Array<String>) {
             consoleLogger(GameLoop::class.java)
         }
         frameRate {
-            300
+            60
         }
         ioEngine {
             GLIOEngine(1024, 768)

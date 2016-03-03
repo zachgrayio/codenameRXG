@@ -57,10 +57,11 @@ open class ActorImpl(
                 sprites[++frameIndex]
             }
             .subscribeOn(Schedulers.computation())
+            .observeOn(Schedulers.computation())
             .subscribe(frameSpriteSubject)
     }
 
     override fun currentSprite():String {
-        return singleSprite ?: frameSpriteSubject.value ?: frameSpriteSubject.toBlocking().first()
+        return singleSprite ?: frameSpriteSubject.value ?: animations[currentAnimationKey]!![0]
     }
 }

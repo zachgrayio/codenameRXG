@@ -106,15 +106,15 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
         // initialize game
         player spawn Position(25f, ground)
 
-        for(it in 1..6) {
-        //doEvery(500, MILLISECONDS) {
+        //for(it in 1..100) {
+        doEvery(500, MILLISECONDS) {
             //if(it > 4)
             actor {
                 size = Size(30f, 45f)
                 animation(key = "stand") { listOf("mario_stand.gif") }
                 animation(key = "crouch", default = true) { listOf("mario_crouch.gif") }
                 animation(key = "jump")   { listOf("mario_jump.gif") }
-            } onInterval demoGameOnInterval spawn Position(it * 100f, ground-400f)//Position.random(xMax = 1000f, yMax = ground - 400)
+            } onInterval demoGameOnInterval spawn Position(it * 20f, ground-400f)//Position.random(xMax = 1000f, yMax = ground - 400)
         }
     }
 }

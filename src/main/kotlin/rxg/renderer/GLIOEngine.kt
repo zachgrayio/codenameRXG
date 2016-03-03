@@ -84,7 +84,9 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
 
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-        frame.actors.filter { it.spawned }
+        frame.actors
+            .toList() // make a copy of the list since despawned actors may get cleaned up by a concurrent thread
+            .filter { it.spawned }
             .groupBy { it.currentSprite() }
             .forEach {
                 val sprite = resourceManager.getByteBufferSprite(it.key)

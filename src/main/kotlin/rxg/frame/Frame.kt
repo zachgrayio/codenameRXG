@@ -1,5 +1,6 @@
 package rxg.frame
 
+import com.sun.deploy.util.ArrayUtil
 import rxg.common.isRotation
 import rxg.frame.actor.Actor
 import rxg.frame.actor.ActorImpl
@@ -18,19 +19,20 @@ class Frame() {
 
     fun actorCollisions() : MutableList<Pair<Actor, Actor>> {
         val collisions:MutableList<Pair<Actor, Actor>> = mutableListOf()
-        if(actors.isEmpty()) return collisions
+        val actorsCopy = actors.toList()
+        if(actorsCopy.isEmpty()) return collisions
         var lastHash = ""
-//        actors
-//            .filter { it.spawned }
-//            .forEach { a1 ->
-//                actors.forEach { a2 ->
-//                    val combinedHash = a1.hashCode().toString().plus(a2.hashCode().toString())
-//                    if(a1 !== a2 && !lastHash.isRotation(combinedHash) && is2DCollision(a1, a2)) {
-//                        lastHash = combinedHash
-//                        collisions.add(Pair(a1, a2))
-//                    }
-//                }
-//        }
+        actorsCopy
+            .filter { it.spawned }
+            .forEach { a1 ->
+                actorsCopy.forEach { a2 ->
+                    val combinedHash = a1.hashCode().toString().plus(a2.hashCode().toString())
+                    if(a1 !== a2 && !lastHash.isRotation(combinedHash) && is2DCollision(a1, a2)) {
+                        lastHash = combinedHash
+                        collisions.add(Pair(a1, a2))
+                    }
+                }
+        }
         return collisions
     }
 

@@ -17,7 +17,7 @@ infix fun String.isRotation(other: String): Boolean {
 data class IntervalHandle(private var interval: Observable<Long>, private var closure:(Long)->Unit) {
     var paused:Boolean = false
     var subscription:Subscription? = interval
-        .observeOn(Schedulers.immediate())
+        .observeOn(Schedulers.computation())
         .subscribe { if(!paused) closure(it) }
 }
 

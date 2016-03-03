@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 
 abstract class SimpleGameplayEngine : IntervalGameplayEngine {
     override val timeUnit: TimeUnit get() = TimeUnit.MILLISECONDS
-    override val interval: Long get() = 10
+    override val interval: Long get() = 1
     override val keySubject: BehaviorSubject<KeyEvent> = BehaviourSubject()
     override val framePointer = Frame()
     private var collisionSubject: BehaviorSubject<Pair<Actor, Actor>> = BehaviourSubject()
