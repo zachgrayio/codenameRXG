@@ -20,17 +20,17 @@ class Frame() {
         val collisions:MutableList<Pair<Actor, Actor>> = mutableListOf()
         if(actors.isEmpty()) return collisions
         var lastHash = ""
-        actors
-            .filter { it.spawned }
-            .forEach { a1 ->
-                actors.forEach { a2 ->
-                    val combinedHash = a1.hashCode().toString().plus(a2.hashCode().toString())
-                    if(a1 !== a2 && is2DCollision(a1, a2) && !lastHash.isRotation(combinedHash)) {
-                        lastHash = combinedHash
-                        collisions.add(Pair(a1, a2))
-                    }
-                }
-        }
+//        actors
+//            .filter { it.spawned }
+//            .forEach { a1 ->
+//                actors.forEach { a2 ->
+//                    val combinedHash = a1.hashCode().toString().plus(a2.hashCode().toString())
+//                    if(a1 !== a2 && !lastHash.isRotation(combinedHash) && is2DCollision(a1, a2)) {
+//                        lastHash = combinedHash
+//                        collisions.add(Pair(a1, a2))
+//                    }
+//                }
+//        }
         return collisions
     }
 

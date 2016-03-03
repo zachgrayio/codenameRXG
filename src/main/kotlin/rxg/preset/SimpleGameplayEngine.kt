@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 
 abstract class SimpleGameplayEngine : IntervalGameplayEngine {
     override val timeUnit: TimeUnit get() = TimeUnit.MILLISECONDS
-    override val interval: Long get() = 1
+    override val interval: Long get() = 10
     override val keySubject: BehaviorSubject<KeyEvent> = BehaviourSubject()
     override val framePointer = Frame()
     private var collisionSubject: BehaviorSubject<Pair<Actor, Actor>> = BehaviourSubject()
@@ -24,7 +24,12 @@ abstract class SimpleGameplayEngine : IntervalGameplayEngine {
             .distinct()
             .filter { it.first.spawned and it.second.spawned }
             .forEach { collisionSubject.onNext(it) }
-        actors.forEach { actor -> actor.intervalClosures.forEach { it(actor) } }
+        val despawned: MutableList<Actor> = mutableListOf()
+        framePointer.actors.forEach { actor ->
+            actor.intervalClosures.forEach { it(actor) }
+            if(!actor.spawned) despawned.add(actor)
+        }
+        despawned.forEach { framePointer.actors.remove(it) }
     }
 
     infix fun Actor.onInterval(closure:(Actor)->Unit): Actor {

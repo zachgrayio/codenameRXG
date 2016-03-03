@@ -3,10 +3,7 @@ package rxg.engine
 import rx.Observable
 import rx.subjects.BehaviorSubject
 import rxg.frame.Frame
-import rxg.frame.actor.Actor
-import rxg.frame.actor.ActorBuilder
-import rxg.frame.actor.Force
-import rxg.frame.actor.Position
+import rxg.frame.actor.*
 import rxg.input.KeyActions
 import rxg.input.KeyEvent
 import rxg.input.Keys
@@ -49,8 +46,13 @@ interface GameplayEngine {
         val builder = ActorBuilder()
         builder.init()
         val actor = builder.build()
-        this.framePointer.actors.add(actor)
         return actor
+    }
+
+    fun Actor.copy(): Actor {
+        val copy = ActorImpl(rotation, size, speedX, speedY, autoReverseEnabled, frameIntervalMs, animations, defaultAnimationKey, false)
+        framePointer.actors.add(copy)
+        return copy
     }
 
     infix fun Actor.moveLeft(value:Float): Actor {
@@ -149,6 +151,7 @@ interface GameplayEngine {
     infix fun Actor.spawn(position: Position): Actor {
         x = position.x
         y = position.y
+        framePointer.actors.add(this)
         spawned = true
         return this
     }
@@ -159,6 +162,7 @@ interface GameplayEngine {
     }
 
     fun Actor.despawn(): Actor {
+        //framePointer.actors.remove(this)
         spawned = false
         return this
     }

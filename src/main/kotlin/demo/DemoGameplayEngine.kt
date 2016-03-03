@@ -1,20 +1,20 @@
 package demo
 
-import rxg.dsl.GameplayDSL
-import rxg.dsl.GameplayDSL.ifIs
-import rxg.dsl.GameplayDSL.ifNot
 import rxg.frame.actor.*
+import rxg.gameplay.dsl.doEvery
+import rxg.gameplay.dsl.ifNot
 import rxg.input.KeyActions.*
 import rxg.input.Keys.*
 import rxg.logger.consoleLogger
 import rxg.preset.SimpleGameplayEngine
+import java.util.concurrent.TimeUnit.*
 
 /**
  * A simple gameplay system based on an interval-based engine which generates 1,000 gameplay frames each second.
  */
 class DemoGameplayEngine() : SimpleGameplayEngine() {
 
-    // logger
+    // Logger
     val logger = consoleLogger(javaClass)
 
     // Gameplay settings
@@ -26,6 +26,7 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     val flySpeedY = 0.3f
     val ground = 768f
     val gravity = Force(y = 0.2f)
+    val friendSpawnRate:Long = 1000//ms
 
     // Gameplay states
     //==================================================================================================================
@@ -36,7 +37,6 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     // extend all actors in this game
     var Actor.health: Int by ActorAttribute({ 3 })
     val Actor.flying : Boolean get() = y in 0f..ground
-
     // define the player
     val player = actor {
         size = Size(30f, 60f)
@@ -60,66 +60,61 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
         }
         health = 3
     }
-    // define some goons
-    val guy1 = actor {
-        size = Size(30f, 45f)
-        animation(key = "stand") { listOf("mario_stand.gif") }
-        animation(key = "crouch", default = true) { listOf("mario_crouch.gif") }
-        animation(key = "jump")   { listOf("mario_jump.gif") }
-    }
-    val guy2 = actor {
-        size = Size(30f, 45f)
-        animation(key = "stand") { listOf("mario_stand.gif") }
-        animation(key = "crouch", default = true) { listOf("mario_crouch.gif") }
-        animation(key = "jump")   { listOf("mario_jump.gif") }
-    }
-    val guy3 = actor {
-        size = Size(30f, 45f)
-        animation(key = "stand") { listOf("mario_stand.gif") }
-        animation(key = "crouch", default = true) { listOf("mario_crouch.gif") }
-        animation(key = "jump")   { listOf("mario_jump.gif") }
-    }
+    // define a friendly actor
+    //val friend =
 
-    // Gameplay functions - simple closures can be used to easily extend the gameplay DSL
+    // Gameplay closures - simple closures can be used to easily extend the gameplay DSL
     //==================================================================================================================
-    val togglePaused    = { paused = !paused }
-    val gameOver        = { player.despawn() }
 
-    val stand = { player play "stand" }
+    val togglePaused = {
+        paused = !paused
+        //friendSpawner.paused = paused
+    }
+    val gameOver = { player.despawn() }
+    val playerStand = { player play "stand" }
     val playerMoveAnimation = { if(player.flying) "swim" else "walk" }
+    // define some interval logic to apply to all actors in this game
+    val demoGameOnInterval:(Actor)->Unit =
+        { if(!paused) {
+            when(it.flying) {
+            true -> it speedX flySpeedX applyForce gravity play "jump"
+            false -> it.playPrevious() speedX walkSpeedX
+            }
+        }}
+    // DemoGameplayEngine methods
+    //==================================================================================================================
 
     // Initialization
     //==================================================================================================================
     init {
         // define key bindings
         ESC on RELEASED does togglePaused
-        SPACE on PRESSED does { /* todo: jump */ }
-        W on PRESSED does ifNot(paused) { player moveUp step play "swim" }
-        A on PRESSED does ifNot(paused) { player moveLeft step play playerMoveAnimation() }
-        A on RELEASED does stand
-        S on PRESSED does ifNot(paused) { player play "crouch" }
-        S on RELEASED does stand
-        D on PRESSED does ifNot(paused) { player moveRight step play playerMoveAnimation() }
-        D on RELEASED does stand
+        SPACE on PRESSED does { /* todo: GRAB friendly unit */ }
+        W on PRESSED does ifNot(paused) { player    moveUp step         play "swim" }
+        A on PRESSED does ifNot(paused) { player    moveLeft step       play playerMoveAnimation() }
+        S on PRESSED does ifNot(paused) { player    play "crouch" }
+        D on PRESSED does ifNot(paused) { player    moveRight step      play playerMoveAnimation() }
+        A on RELEASED does playerStand // todo: 'or' infix for keys
+        S on RELEASED does playerStand
+        D on RELEASED does playerStand
 
-        // update actors onInterval
-        actors onInterval { if(!paused) {
-            when(it.flying) {
-                true -> it speedX flySpeedX applyForce gravity play "jump"
-                false -> it.playPrevious() speedX walkSpeedX
-            }
-        }}
+        // define player behavior and collision logic
         player onInterval { if(it.health <= 0) gameOver() }
-
-        // define some collision logic
-        player onCollision { other ->
-            other.despawn()
-        }
+        player onInterval demoGameOnInterval
+        player onCollision { other -> other.despawn() }
 
         // initialize game
         player spawn Position(25f, ground)
-        guy1 spawn Position(500f, ground - 400f)
-        guy2 spawn Position(200f, ground - 300f)
-        guy3 spawn Position(700f, ground - 500f)
+
+        for(it in 1..6) {
+        //doEvery(500, MILLISECONDS) {
+            //if(it > 4)
+            actor {
+                size = Size(30f, 45f)
+                animation(key = "stand") { listOf("mario_stand.gif") }
+                animation(key = "crouch", default = true) { listOf("mario_crouch.gif") }
+                animation(key = "jump")   { listOf("mario_jump.gif") }
+            } onInterval demoGameOnInterval spawn Position(it * 100f, ground-400f)//Position.random(xMax = 1000f, yMax = ground - 400)
+        }
     }
 }

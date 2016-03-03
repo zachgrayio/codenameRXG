@@ -84,76 +84,80 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
 
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-        frame.actors.filter { it.spawned }.forEach {
-            val x = it.x
-            val y = it.y
-            val rotation = it.rotation
-            val sprite = resourceManager.getByteBufferSprite(it.currentSprite())
-            val reverseSprite = it.reverseSprite
-            val spriteRight = (sprite.width.toFloat() / 2)
-            val spriteBottom = sprite.height.toFloat()
-            val spriteLeft = (0.0f - spriteRight)
-            val spriteTop = 0.0f
-            val texLeft = if(reverseSprite) 1.0f else 0.0f
-            val texRight = if(reverseSprite) 0.0f else 1.0f
+        frame.actors.filter { it.spawned }
+            .groupBy { it.currentSprite() }
+            .forEach {
+                val sprite = resourceManager.getByteBufferSprite(it.key)
+                // set sprite as texture image
+                if (sprite.comp == 3) {
+                    if ((sprite.width and 3) != 0)
+                        glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (sprite.width and 1))
+                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, sprite.width, sprite.height, 0, GL_RGB, GL_UNSIGNED_BYTE, sprite.image)
+                } else {
+                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sprite.width, sprite.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, sprite.image)
+                    glEnable(GL_BLEND)
+                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+                }
+                it.value.forEach {
+                    val x = it.x
+                    val y = it.y
+                    val rotation = it.rotation
 
-            // hitbox
-            val drawHitbox = true // todo: parameterize
-            val hitboxSize = it.size
-            val hitboxRight = hitboxSize.x / 2
-            val hitboxBottom = hitboxSize.y
-            val hitboxLeft = 0.0f - hitboxRight
-            val hitboxTop = 0.0f
+                    val reverseSprite = it.reverseSprite
+                    val spriteRight = (sprite.width.toFloat() / 2)
+                    val spriteBottom = sprite.height.toFloat()
+                    val spriteLeft = (0.0f - spriteRight)
+                    val spriteTop = 0.0f
+                    val texLeft = if(reverseSprite) 1.0f else 0.0f
+                    val texRight = if(reverseSprite) 0.0f else 1.0f
 
-            // set sprite as texture image
-            if (sprite.comp == 3) {
-                if ((sprite.width and 3) != 0)
-                glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (sprite.width and 1))
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, sprite.width, sprite.height, 0, GL_RGB, GL_UNSIGNED_BYTE, sprite.image)
-            } else {
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sprite.width, sprite.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, sprite.image)
-                glEnable(GL_BLEND)
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-            }
+                    // hitbox
+                    val drawHitbox = false // todo: parameterize
+                    val hitboxSize = it.size
+                    val hitboxRight = hitboxSize.x / 2
+                    val hitboxBottom = hitboxSize.y
+                    val hitboxLeft = 0.0f - hitboxRight
+                    val hitboxTop = 0.0f
 
-            // draw sprite on a textured quad
-            glPushMatrix()
+                    // draw sprite on a textured quad
+                    glPushMatrix()
 
-            glScalef(scale, scale, 0.0f)
-            glTranslatef(x, y - sprite.height, 0f)
-            glRotatef(rotation, 0.0f, 0.0f, 1.0f)
+                    glScalef(scale, scale, 0.0f)
+                    glTranslatef(x, y - sprite.height, 0f)
+                    glRotatef(rotation, 0.0f, 0.0f, 1.0f)
 
-            glBegin(GL_QUADS)
-                glTexCoord2f(texLeft, 0.0f)
-                glVertex2f(spriteLeft, spriteTop)
+                    glBegin(GL_QUADS)
+                    glTexCoord2f(texLeft, 0.0f)
+                    glVertex2f(spriteLeft, spriteTop)
 
-                glTexCoord2f(texRight, 0.0f)
-                glVertex2f(spriteRight, spriteTop)
+                    glTexCoord2f(texRight, 0.0f)
+                    glVertex2f(spriteRight, spriteTop)
 
-                glTexCoord2f(texRight, 1.0f)
-                glVertex2f(spriteRight, spriteBottom)
+                    glTexCoord2f(texRight, 1.0f)
+                    glVertex2f(spriteRight, spriteBottom)
 
-                glTexCoord2f(texLeft, 1.0f)
-                glVertex2f(spriteLeft, spriteBottom)
-            glEnd()
+                    glTexCoord2f(texLeft, 1.0f)
+                    glVertex2f(spriteLeft, spriteBottom)
+                    glEnd()
 
-            if(drawHitbox) {
-                glPushMatrix()
-                glColor3f(0.0f, 0.0f, 1.0f)
-                glLineWidth(4.0f)
-                glBegin(GL_LINE_STRIP)
-                glVertex2f(hitboxLeft, hitboxTop)
-                glVertex2f(hitboxRight, hitboxTop)
+                    if(drawHitbox) {
+                        glPushMatrix()
+                        glColor3f(0.0f, 0.0f, 1.0f)
+                        glLineWidth(4.0f)
+                        glBegin(GL_LINE_STRIP)
+                        glVertex2f(hitboxLeft, hitboxTop)
+                        glVertex2f(hitboxRight, hitboxTop)
 
-                glVertex2f(hitboxRight, hitboxBottom)
-                glVertex2f(hitboxLeft, hitboxBottom)
+                        glVertex2f(hitboxRight, hitboxBottom)
+                        glVertex2f(hitboxLeft, hitboxBottom)
 
-                glVertex2f(hitboxLeft, hitboxTop)
-                glEnd()
-                glPopMatrix()
-            }
+                        glVertex2f(hitboxLeft, hitboxTop)
+                        glEnd()
+                        glPopMatrix()
+                    }
 
-            glPopMatrix()
+                    glPopMatrix()
+                }
         }
 
         // render

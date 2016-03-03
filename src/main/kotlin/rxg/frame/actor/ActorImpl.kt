@@ -14,7 +14,7 @@ open class ActorImpl(
     override val autoReverseEnabled:Boolean = true,
     override val frameIntervalMs:Long = 100,
     override val animations: HashMap<String, List<String>> = HashMap(),
-    override var defaultAnimationKey: String?,
+    override var defaultAnimationKey: String? = null,
     override var spawned: Boolean = false)
 : Actor {
 
