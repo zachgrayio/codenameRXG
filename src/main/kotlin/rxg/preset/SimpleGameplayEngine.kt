@@ -42,11 +42,14 @@ abstract class SimpleGameplayEngine : IntervalGameplayEngine {
     /**
      * Actor - collisions
      */
-    private var collisionChecker = doEvery(50, TimeUnit.MILLISECONDS) { // check for collisions every 50 ms on a new thread
-        val actorsCopy = framePointer.actors.filter { it.spawned }.toList()
-        actorsCopy.forEach { actor ->
-            actorsCopy.forEach { if(actor.isColliding(it)) collisionSubject.onNext(Pair(actor, it)) }
-        }
+    private var collisionChecker = doEvery(10, TimeUnit.MILLISECONDS) {
+        //val actorsCopy = framePointer.actors.toList()
+        val oactor = Observable.from(framePointer.actors.toList()).cache()
+        oactor
+            .filter { it.spawned }
+            .forEach { actor ->
+                oactor.forEach { if(actor.isColliding(it)) collisionSubject.onNext(Pair(actor, it)) }
+            }
     }
     private var collisionSubject: BehaviorSubject<Pair<Actor, Actor>> = BehaviourSubject()
     val collisions: Observable<Pair<Actor, Actor>> get() = collisionSubject.asObservable()

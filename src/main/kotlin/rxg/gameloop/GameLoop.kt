@@ -39,7 +39,7 @@ class GameLoop(var logger: Logger?,
                 .takeUntil(exitSignal)
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.io())
-                .subscribe()
+                .subscribe({}, { it.printStackTrace() })
 
             logger?.log("run", "Main subscription active, game loop is running.")
 

@@ -109,14 +109,6 @@ interface GameplayEngine {
         return this
     }
 
-    fun Actor.playDefault(): Actor {
-        if(previousAnimationKey != null && previousAnimationKey != defaultAnimationKey)
-            previousAnimationKey = currentAnimationKey
-
-        currentAnimationKey = defaultAnimationKey ?: animations.keys.first()
-        return this
-    }
-
     infix fun List<Actor>.applyForce(force:Force) {
         actors.forEach {
             it.apply {
@@ -174,12 +166,12 @@ interface GameplayEngine {
     infix fun KeyEvent.does(closure:()->Any) {
         keySubject
             .filter { it.key == key && it.keyAction == keyAction}
-            .subscribe { closure() }
+            .subscribe({ closure() }, { it.printStackTrace() })
     }
 
     infix fun List<KeyEvent>.does(closure:()->Any) {
         keySubject
             .filter { event -> any { it.key == event.key && it.keyAction == event.keyAction} }
-            .subscribe { closure() }
+            .subscribe({ closure() }, { it.printStackTrace() })
     }
 }

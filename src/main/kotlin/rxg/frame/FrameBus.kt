@@ -22,7 +22,7 @@ class FrameBus {
             // set input delta
             .timeInterval()
             .map { it.value.setDelta(it.intervalInMilliseconds) }
-            .subscribe(frameSubject)
+            .subscribe({ frameSubject.onNext(it) }, { it.printStackTrace() })
         return this
     }
 

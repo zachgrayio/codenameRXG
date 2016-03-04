@@ -60,8 +60,6 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
         }
         health = 3
     }
-    // define a friendly actor
-    //val friend =
 
     // Gameplay closures - simple closures can be used to easily extend the gameplay DSL
     //==================================================================================================================
@@ -107,7 +105,7 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
         player spawn Position(25f, ground)
 
         for(it in 1..1000) {
-        //doEvery(500, MILLISECONDS) {
+        //doEvery(200, MILLISECONDS) {
             //if(it > 4)
             actor {
                 size = Size(30f, 45f)
