@@ -18,6 +18,7 @@ data class IntervalHandle(private var interval: Observable<Long>, private var cl
     var paused:Boolean = false
     var subscription:Subscription? = interval
         .observeOn(Schedulers.computation())
+        .onBackpressureBuffer()
         .subscribe { if(!paused) closure(it) }
 }
 

@@ -99,13 +99,6 @@ interface GameplayEngine {
         return this
     }
 
-    infix fun Actor.play(key:String): Actor {
-        if(previousAnimationKey != null && previousAnimationKey != key)
-            previousAnimationKey = currentAnimationKey
-        currentAnimationKey = key
-        return this
-    }
-
     infix fun Actor.speedX(value:Float): Actor {
         speedX = value
         return this
@@ -113,11 +106,6 @@ interface GameplayEngine {
 
     infix fun Actor.speedY(value:Float): Actor {
         speedY = value
-        return this
-    }
-
-    fun Actor.playPrevious(): Actor {
-        currentAnimationKey = previousAnimationKey ?: defaultAnimationKey ?: animations.keys.first()
         return this
     }
 

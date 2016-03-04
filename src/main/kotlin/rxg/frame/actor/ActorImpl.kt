@@ -56,8 +56,8 @@ open class ActorImpl(
                 if(frameIndex + 1 >= sprites!!.count()) frameIndex = -1
                 sprites[++frameIndex]
             }
-            .subscribeOn(Schedulers.computation())
-            .observeOn(Schedulers.computation())
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(Schedulers.newThread())
             .subscribe(frameSpriteSubject)
     }
 
