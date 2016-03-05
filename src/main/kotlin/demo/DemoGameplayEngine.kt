@@ -26,7 +26,7 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
     val flySpeedY = 0.3f
     val ground = 768f
     val gravity = Force(y = 0.2f)
-    val friendSpawnRate:Long = 3000//ms
+    val friendSpawnRate:Long = 5000//ms
 
     // Gameplay states
     //==================================================================================================================
@@ -89,7 +89,7 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
             animation(key = "jump")   { listOf("mario_jump.gif") }
             animation(key = "grabbed") { listOf("mario_skid.gif") }
         }
-        friend onInterval demoGameOnInterval spawn Position.random(0f..1000f, ground..400f)
+        friend onInterval demoGameOnInterval spawn Position.random(150f..900f, ground..400f)
     }
     val togglePaused = {
         paused = !paused
@@ -98,18 +98,15 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
 
     // DemoGameplayEngine methods
     //==================================================================================================================
-    fun setGrabbing(grabbing:Boolean) {
-        playerGrabbing = grabbing
-    }
 
     // Initialization
     //==================================================================================================================
     init {
         // define key bindings
         ESC on RELEASED does togglePaused
-        SPACE on PRESSED does { setGrabbing(true) }
+        SPACE on PRESSED does { playerGrabbing = true; Unit }
         SPACE on RELEASED does {
-            setGrabbing(false)
+            playerGrabbing = false
             actors.forEach { it.grabbed = false }
         }
         W on PRESSED does ifNot(paused) { player    moveUp step         play "swim" }
@@ -128,15 +125,30 @@ class DemoGameplayEngine() : SimpleGameplayEngine() {
                 "friend" -> {
                     if(playerGrabbing) {
                         other play "grabbed"
-                        other.latchToWhile(player, { playerGrabbing })
+                        other.latchTo(player, whileTrue = { playerGrabbing })
                         other.grabbed = true
                     }
                 }
-                //else -> other.despawn()
             }
         }
 
         // initialize game
-        player spawn Position(25f, ground)
+        // plants
+        for(index in 0..18) {
+            val plant = actor {
+                tag = "plant"
+                size = Size(30f, 40f)
+                animation("", default = true) { listOf("piranha_plant.gif") }
+            }
+            plant onCollision { other -> other.despawn() } spawn Position(index * 45f + 100f, ground)
+        }
+        // pipe
+        actor {
+            tag = "pipe"
+            size = Size(80f, 60f)
+            animation("", default = true) { listOf("pipe.gif") }
+        } onCollision { other -> if(other.tag == "friend") other.despawn() } spawn Position(980f, ground)
+        // player
+        player spawn Position(15f, ground)
     }
 }
