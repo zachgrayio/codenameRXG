@@ -52,15 +52,15 @@ interface Actor {
     }
 
     infix fun latchTo(other:Actor): Actor {
-        latchToWhile(other, null)
+        latchTo(other, null)
         return this
     }
 
-    fun latchToWhile(other:Actor, whileClosure:(()->Boolean)?): Actor {
+    fun latchTo(other:Actor, whileTrue:(()->Boolean)?): Actor {
         val xoff = position.x - other.position.x
         val yoff = position.y - other.position.y
         other.positionSubject
-            .takeWhile { if(whileClosure == null) true else whileClosure.invoke() }
+            .takeWhile { if(whileTrue == null) true else whileTrue() }
             .map { Position(it.x + xoff, it.y + yoff) }
             .subscribe { p -> position = p }
         return this
