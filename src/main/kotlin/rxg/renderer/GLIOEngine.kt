@@ -101,8 +101,8 @@ class GLIOEngine(override val width: Int, override val height: Int, override val
                     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
                 }
                 it.value.forEach {
-                    val x = it.x
-                    val y = it.y
+                    val x = it.x / scale
+                    val y = it.y / scale
                     val rotation = it.rotation
 
                     val reverseSprite = it.reverseSprite
