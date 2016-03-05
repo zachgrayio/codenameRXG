@@ -1,4 +1,4 @@
-package rxg.engine
+package rxg.gameplay.engine
 
 import rx.Observable
 import rx.subjects.BehaviorSubject
@@ -12,7 +12,7 @@ interface GameplayEngine {
     /**
      * Every gameplay engine must implement and retain an immutable frame instance
      */
-    val framePointer:Frame
+    val framePointer: Frame
 
     /**
      * Get the actor list from the frame pointer
@@ -49,41 +49,43 @@ interface GameplayEngine {
         return actor
     }
 
-    fun Actor.copy(): Actor {
-        val copy = ActorImpl(rotation, size, speedX, speedY, autoReverseEnabled, frameIntervalMs, animations, defaultAnimationKey, false)
-        framePointer.actors.add(copy)
-        return copy
-    }
-
     infix fun Actor.moveLeft(value:Float): Actor {
-        x -= value
-            .times(speedX)
-            .times(gameSpeed)
-            .times(framePointer.delta)
+        position = Position(
+            x = position.x - value
+                .times(speedX)
+                .times(gameSpeed)
+                .times(framePointer.delta),
+            y = position.y)
         return this
     }
 
     infix fun Actor.moveRight(value:Float): Actor {
-        x += value
-            .times(speedX)
-            .times(gameSpeed)
-            .times(framePointer.delta)
+        position = Position(
+            x = position.x + value
+                .times(speedX)
+                .times(gameSpeed)
+                .times(framePointer.delta),
+            y = position.y)
         return this
     }
 
     infix fun Actor.moveUp(value:Float): Actor {
-        y -= value
-            .times(speedY)
-            .times(gameSpeed)
-            .times(framePointer.delta)
+        position = Position(
+            y = position.y - value
+                .times(speedY)
+                .times(gameSpeed)
+                .times(framePointer.delta),
+            x = position.x)
         return this
     }
 
     infix fun Actor.moveDown(value:Float): Actor {
-        y += value
-            .times(speedY)
-            .times(gameSpeed)
-            .times(framePointer.delta)
+        position = Position(
+            y = position.y + value
+                .times(speedY)
+                .times(gameSpeed)
+                .times(framePointer.delta),
+            x = position.x)
         return this
     }
 
@@ -109,28 +111,24 @@ interface GameplayEngine {
         return this
     }
 
-    infix fun List<Actor>.applyForce(force:Force) {
+    infix fun List<Actor>.applyForce(force: Force) {
         actors.forEach {
-            it.apply {
-                x += force.x.times(gameSpeed).times(framePointer.delta)
-                y += force.y.times(gameSpeed).times(framePointer.delta)
-                force.forceClosure(it)
-            }
+            it.applyForce(force)
         }
     }
 
-    infix fun Actor.applyForce(force:Force): Actor {
+    infix fun Actor.applyForce(force: Force): Actor {
        apply {
-           x += force.x.times(gameSpeed).times(framePointer.delta)
-           y += force.y.times(gameSpeed).times(framePointer.delta)
-           force.forceClosure(this)
+           position = Position(
+               x = position.x + force.x.times(gameSpeed).times(framePointer.delta),
+               y = position.y + force.y.times(gameSpeed).times(framePointer.delta)
+           )
         }
         return this
     }
 
     infix fun Actor.spawn(position: Position): Actor {
-        x = position.x
-        y = position.y
+        this.position = position
         framePointer.actors.add(this)
         spawned = true
         return this
@@ -150,15 +148,15 @@ interface GameplayEngine {
     /**
      * Key subject infix operators
      */
-    infix fun Keys.on(action:KeyActions): KeyEvent {
+    infix fun Keys.on(action: KeyActions): KeyEvent {
         return KeyEvent(this, action)
     }
 
-    infix fun KeyEvent.or(action:KeyActions): MutableList<KeyEvent> {
+    infix fun KeyEvent.or(action: KeyActions): MutableList<KeyEvent> {
         return mutableListOf(this, KeyEvent(key, action))
     }
 
-    infix fun MutableList<KeyEvent>.or(action:KeyActions): MutableList<KeyEvent> {
+    infix fun MutableList<KeyEvent>.or(action: KeyActions): MutableList<KeyEvent> {
         this.add(KeyEvent(get(0).key, action))
         return this
     }

@@ -1,10 +1,11 @@
 package rxg.frame.actor
 
+import rx.subjects.BehaviorSubject
 import java.util.*
 
 interface Actor {
-    var x:Float
-    var y:Float
+    var position:Position
+    val positionSubject:BehaviorSubject<Position>
     var rotation:Float
     var size: Size
     var speedX:Float
@@ -17,14 +18,15 @@ interface Actor {
     var previousAnimationKey:String?
     var reverseSprite: Boolean
     var spawned: Boolean
+    var tag:String?
     fun currentSprite():String
 
     fun isColliding(a2: Actor?): Boolean {
         if(a2 == null) return false
         if(this === a2) return false
         if(!(spawned && a2.spawned)) return false
-        val collisionX = this.x + this.size.x >= a2.x && a2.x + a2.size.x >= this.x
-        val collisionY = this.y - this.size.y <= a2.y && a2.y - a2.size.y <= this.y
+        val collisionX = this.position.x + this.size.x >= a2.position.x && a2.position.x + a2.size.x >= this.position.x
+        val collisionY = this.position.y - this.size.y <= a2.position.y && a2.position.y - a2.size.y <= this.position.y
         return collisionX && collisionY
     }
 
@@ -46,6 +48,21 @@ interface Actor {
             previousAnimationKey = currentAnimationKey
         }
         currentAnimationKey = key
+        return this
+    }
+
+    infix fun latchTo(other:Actor): Actor {
+        latchToWhile(other, null)
+        return this
+    }
+
+    fun latchToWhile(other:Actor, whileClosure:(()->Boolean)?): Actor {
+        val xoff = position.x - other.position.x
+        val yoff = position.y - other.position.y
+        other.positionSubject
+            .takeWhile { if(whileClosure == null) true else whileClosure.invoke() }
+            .map { Position(it.x + xoff, it.y + yoff) }
+            .subscribe { p -> position = p }
         return this
     }
 }

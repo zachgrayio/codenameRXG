@@ -1,6 +1,7 @@
 package rxg.frame.actor
 
 import rx.Observable
+import rx.lang.kotlin.BehaviourSubject
 import rx.schedulers.Schedulers
 import rx.subjects.BehaviorSubject
 import java.util.*
@@ -15,22 +16,22 @@ open class ActorImpl(
     override val frameIntervalMs:Long = 100,
     override val animations: HashMap<String, List<String>> = HashMap(),
     override var defaultAnimationKey: String? = null,
-    override var spawned: Boolean = false)
+    override var spawned: Boolean = false,
+    override var tag: String? = null)
 : Actor {
 
     override var previousAnimationKey: String? = null
     override var currentAnimationKey:String? = null
     override var reverseSprite: Boolean = false
 
-    private var _x:Float = 0f
-    override var x:Float
-        get() = _x
+    override val positionSubject: BehaviorSubject<Position> = BehaviourSubject(Position(x = 0f, y = 0f))
+    override var position: Position
+        get() = positionSubject.value
         set(value) {
-            if(value == _x) return
-            if(autoReverseEnabled) reverseSprite = value < _x
-            _x = value
+            if(value.x == positionSubject.value.x && value.y == positionSubject.value.y) return
+            if(autoReverseEnabled && value.y == positionSubject.value.y) reverseSprite = value.x < positionSubject.value.x
+            positionSubject.onNext(value)
         }
-    override var y:Float = 0f
 
     private val frameSpriteSubject = BehaviorSubject.create<String>()
     private var singleSprite:String? = null

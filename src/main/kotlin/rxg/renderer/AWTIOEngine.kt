@@ -32,7 +32,7 @@ abstract class AWTIOEngine(override val width:Int, override val height:Int) : IO
         frame.actors.forEach { actor ->
             val sprite = resourceManager.getBufferedImageSprite(actor.currentSprite())
             canvas.graphics.clearRect(0,0, width, height)
-            canvas.graphics.drawImage(sprite, actor.x.toInt(), actor.y.toInt(), sprite.width, sprite.height, null)
+            canvas.graphics.drawImage(sprite, actor.position.x.toInt(), actor.position.y.toInt(), sprite.width, sprite.height, null)
         }
     }
 

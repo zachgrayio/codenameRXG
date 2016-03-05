@@ -2,7 +2,7 @@ package rxg.frame
 
 import rx.Observable
 import rx.subjects.BehaviorSubject
-import rxg.engine.GameplayEngine
+import rxg.gameplay.engine.GameplayEngine
 
 class FrameBus {
 

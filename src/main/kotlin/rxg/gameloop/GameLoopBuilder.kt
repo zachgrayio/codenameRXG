@@ -1,6 +1,6 @@
 package rxg.gameloop
 
-import rxg.engine.GameplayEngine
+import rxg.gameplay.engine.GameplayEngine
 import rxg.frame.Frame
 import rxg.logger.Logger
 import rxg.logger.createLogger

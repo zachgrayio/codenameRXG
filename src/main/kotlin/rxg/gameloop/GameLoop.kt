@@ -5,7 +5,7 @@ import rx.Subscription
 import rx.schedulers.Schedulers
 import rx.subjects.BehaviorSubject
 import rxg.frame.FrameBus
-import rxg.engine.GameplayEngine
+import rxg.gameplay.engine.GameplayEngine
 import rxg.frame.Frame
 import rxg.logger.Logger
 import rxg.renderer.IOEngine

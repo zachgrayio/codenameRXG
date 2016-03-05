@@ -1,7 +1,8 @@
-package rxg.engine
+package rxg.gameplay.engine
 
 import rx.Observable
 import rxg.frame.Frame
+import rxg.gameplay.engine.GameplayEngine
 import java.util.concurrent.TimeUnit
 
 /**

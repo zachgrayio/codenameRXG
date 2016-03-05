@@ -1,9 +1,8 @@
 package rxg.frame.actor
 
 import java.util.*
-import java.util.concurrent.ThreadLocalRandom
 import kotlin.reflect.KProperty
-import rxg.common.randomFloatBetween
+import rxg.common.randomFloatInRange
 
 class ActorAttribute<T: Any>(private var initialValueClosure: ()->T) {
     private var valueMap = HashMap<Int, T>()
@@ -18,13 +17,18 @@ class ActorAttribute<T: Any>(private var initialValueClosure: ()->T) {
 
 data class Position(var x:Float, var y:Float) {
     companion object {
-        fun random(xMax:Float = 0f, yMax:Float = 0f): Position {
-            val randX = randomFloatBetween(0f, xMax)
-            val randY = randomFloatBetween(0f, yMax)
+        fun random(xBounds:ClosedRange<Float>, yBounds:ClosedRange<Float>): Position {
+            val randX = randomFloatInRange(xBounds)
+            val randY = randomFloatInRange(yBounds)
             return Position(x = randX, y = randY)
         }
     }
 }
 
 data class Size(var x:Float = 0f, var y:Float = 0f)
-data class Force(var x:Float = 0f, var y:Float = 0f, val forceClosure:Actor.() -> Unit = {})
+data class Force(var x:Float = 0f, var y:Float = 0f)
+
+fun Actor.copy(): Actor {
+    val copy = ActorImpl(rotation, size, speedX, speedY, autoReverseEnabled, frameIntervalMs, animations, defaultAnimationKey, false)
+    return copy
+}

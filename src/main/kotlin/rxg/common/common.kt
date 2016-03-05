@@ -2,9 +2,7 @@ package rxg.common
 
 import rx.Observable
 import rx.Subscription
-import rx.schedulers.Schedulers
 import java.util.*
-import java.util.concurrent.ThreadLocalRandom
 
 interface Factory<T> {
     fun create() : T
@@ -22,7 +20,10 @@ data class IntervalHandle(private var interval: Observable<Long>, private var cl
         .subscribe({ if(!paused) closure(it) }, { it.printStackTrace() })
 }
 
-fun randomFloatBetween(min:Float, max:Float): Float {
-    if(min < 0 || max < 0) throw RuntimeException("Only positive values are supported.")
-    return Random().nextFloat().times((min - max).plus(1))
+fun randomFloatInRange(range:ClosedRange<Float>): Float {
+    return Random().nextFloat().times((range.endInclusive - range.start).plus(range.start))
+}
+
+fun randomLongInRange(range:ClosedRange<Long>): Long {
+    return Random().nextLong().times((range.endInclusive - range.start).plus(range.start))
 }

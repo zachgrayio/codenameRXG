@@ -29,6 +29,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     // RxKotlin
     compile "io.reactivex:rxkotlin:$rxkotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
 }
 task wrapper(type: Wrapper) {
     gradleVersion = "2.11"

@@ -4,7 +4,7 @@ import rx.Observable
 import rx.lang.kotlin.BehaviourSubject
 import rx.schedulers.Schedulers
 import rx.subjects.BehaviorSubject
-import rxg.engine.IntervalGameplayEngine
+import rxg.gameplay.engine.IntervalGameplayEngine
 import rxg.frame.Frame
 import rxg.frame.actor.Actor
 import rxg.frame.actor.ActorAttribute
@@ -24,7 +24,8 @@ abstract class SimpleGameplayEngine : IntervalGameplayEngine {
     private var Actor.intervalClosures: MutableList<(Actor)->Unit> by ActorAttribute<MutableList<(Actor)->Unit>>(initialValueClosure = { mutableListOf() })
     override fun onInterval() {
         val despawned: MutableList<Actor> = mutableListOf()
-        framePointer.actors.forEach { actor ->
+        val actorsCopy = framePointer.actors.toList()
+        actorsCopy.forEach { actor ->
             actor.intervalClosures.forEach { it(actor) }
             if(!actor.spawned) despawned.add(actor)
         }
@@ -43,7 +44,6 @@ abstract class SimpleGameplayEngine : IntervalGameplayEngine {
      * Actor - collisions
      */
     private var collisionChecker = doEvery(10, TimeUnit.MILLISECONDS) {
-        //val actorsCopy = framePointer.actors.toList()
         val oactor = Observable.from(framePointer.actors.toList()).cache()
         oactor
             .filter { it.spawned }
